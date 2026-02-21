@@ -13,6 +13,7 @@ export class SocketManager {
     this.matchmakingService = new MatchmakingService();
     this.battleService = new BattleService();
     this.setupSocketHandlers();
+    this.setupMatchmakingEvents();
   }
 
   private setupSocketHandlers(): void {
@@ -26,38 +27,26 @@ export class SocketManager {
         console.log(`User ${data.userId} authenticated`);
       });
 
-      socket.on('join-matchmaking', async (data: { userId: string, elo: number, preferredLanguages: string[] }) => {
+      socket.on('join-matchmaking', async (data: { userId: string, displayName: string, elo: number, preferredLanguages: string[] }) => {
         try {
           console.log(`User ${data.userId} joining matchmaking queue`);
 
-          const match = await this.matchmakingService.findMatch({
+          this.matchmakingService.addToQueue({
+            id: socket.id,
             userId: data.userId,
+            displayName: data.displayName,
             elo: data.elo,
             preferredLanguages: data.preferredLanguages as any,
-            timestamp: new Date()
+            timestamp: new Date(),
+            maxWaitTime: 300,
+            socketId: socket.id
           });
 
-          if (match) {
-            // Match found - notify both players
-            const battleId = await this.battleService.createBattle(match.player1.userId, match.player2.userId);
-
-            this.io.to(`user:${match.player1.userId}`).emit('match-found', {
-              battleId,
-              opponent: match.player2,
-              countdown: 5
-            });
-
-            this.io.to(`user:${match.player2.userId}`).emit('match-found', {
-              battleId,
-              opponent: match.player1,
-              countdown: 5
-            });
-
-            console.log(`Match created: ${match.player1.userId} vs ${match.player2.userId}`);
-          } else {
-            // Added to queue
-            socket.emit('matchmaking-joined', { inQueue: true });
-          }
+          // Emit queue joined confirmation
+          socket.emit('queue-joined', {
+            position: this.matchmakingService.getQueuePosition(data.userId),
+            stats: this.matchmakingService.getQueueStats()
+          });
         } catch (error) {
           console.error('Matchmaking error:', error);
           socket.emit('error', { message: 'Failed to join matchmaking' });
@@ -126,6 +115,53 @@ export class SocketManager {
           console.log(`User ${userId} disconnected`);
         }
       });
+    });
+  }
+
+  private setupMatchmakingEvents(): void {
+    // Listen for matchmaking events
+    this.matchmakingService.on('matchFound', (match) => {
+      console.log(`Match found: ${match.player1.displayName} vs ${match.player2.displayName}`);
+
+      // Notify both players about the match
+      this.io.to(`user:${match.player1.userId}`).emit('match-found', {
+        match,
+        opponent: match.player2
+      });
+
+      this.io.to(`user:${match.player2.userId}`).emit('match-found', {
+        match,
+        opponent: match.player1
+      });
+    });
+
+    this.matchmakingService.on('matchReady', async (match) => {
+      console.log(`Match ready: ${match.player1.displayName} vs ${match.player2.displayName}`);
+
+      try {
+        // Create battle
+        const battleId = await this.battleService.createBattle(match.player1.userId, match.player2.userId);
+
+        // Notify players to start battle
+        this.io.to(`user:${match.player1.userId}`).emit('battle-ready', {
+          battleId,
+          matchId: match.id,
+          opponent: match.player2
+        });
+
+        this.io.to(`user:${match.player2.userId}`).emit('battle-ready', {
+          battleId,
+          matchId: match.id,
+          opponent: match.player1
+        });
+      } catch (error) {
+        console.error('Failed to create battle:', error);
+      }
+    });
+
+    this.matchmakingService.on('queueUpdated', (stats) => {
+      // Broadcast queue stats to all connected clients
+      this.io.emit('queue-stats', stats);
     });
   }
 

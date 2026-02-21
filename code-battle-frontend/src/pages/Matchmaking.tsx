@@ -1,12 +1,12 @@
 import React from 'react';
+import { MatchmakingQueue } from '../components/MatchmakingQueue';
 
 export const Matchmaking: React.FC = () => {
-  return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Find a Battle</h1>
-      <div className="card">
-        <p className="text-gray-600">Matchmaking system coming soon...</p>
-      </div>
-    </div>
-  );
+  const handleMatchReady = (match: any) => {
+    console.log('Match ready:', match);
+    // TODO: Navigate to battle interface
+    alert(`Match ready! Starting battle in ${match.language} (${match.difficultyLevel} difficulty)`);
+  };
+
+  return <MatchmakingQueue onMatchReady={handleMatchReady} />;
 };

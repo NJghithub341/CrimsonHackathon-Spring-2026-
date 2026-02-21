@@ -57,10 +57,14 @@ export interface Battle {
 }
 
 export interface MatchmakingRequest {
+  id: string;
   userId: string;
+  displayName: string;
   elo: number;
   preferredLanguages: ProgrammingLanguage[];
   timestamp: Date;
+  maxWaitTime: number;
+  socketId?: string;
 }
 
 export interface AuthRequest extends Request {
