@@ -45,3 +45,9 @@ coverage/
 # Cache
 .cache/
 .parcel-cache/
+
+# Documentation and Setup Instructions (Keep Internal)
+*.md
+!README.md
+docs/
+documentation/

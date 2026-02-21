@@ -93,3 +93,25 @@ google-credentials.json
 # Temporary folders
 tmp/
 temp/
+
+# Documentation and Setup Instructions (Keep Internal)
+ARCHITECTURE.md
+SETUP.md
+API_DOCUMENTATION.md
+TODO.txt
+CONTEXT.md
+DEVELOPMENT.md
+DEPLOYMENT.md
+*.md
+!README.md
+
+# Internal documentation folders
+docs/
+documentation/
+setup/
+guides/
+
+# Development notes and planning
+NOTES.txt
+PLANNING.md
+ROADMAP.md

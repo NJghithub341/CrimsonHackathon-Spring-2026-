@@ -35,3 +35,9 @@ google-credentials.json
 # OS
 .DS_Store
 Thumbs.db
+
+# Documentation and Setup Instructions (Keep Internal)
+*.md
+!README.md
+docs/
+documentation/
