@@ -46,6 +46,13 @@ export class QuestionController {
     try {
       const { id } = req.params;
 
+      if (typeof id !== 'string') {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid question ID'
+        });
+      }
+
       const question = questionService.getQuestion(id);
 
       if (!question) {
@@ -120,7 +127,7 @@ export class QuestionController {
         });
       }
 
-      const result = questionService.validateAnswer(id, answer);
+      const result = questionService.validateAnswer(id as string, answer);
 
       res.json({
         success: true,
@@ -260,6 +267,130 @@ export class QuestionController {
       res.status(500).json({
         success: false,
         error: 'Failed to get questions by difficulty'
+      });
+    }
+  }
+
+  /**
+   * Generate AI-powered question
+   * POST /api/questions/ai-generate
+   * Body: { language: string, difficulty: string, category?: string }
+   */
+  static async generateAIQuestion(req: Request, res: Response) {
+    try {
+      const { language, difficulty, category } = req.body;
+
+      if (!language || !difficulty) {
+        return res.status(400).json({
+          success: false,
+          error: 'Language and difficulty are required'
+        });
+      }
+
+      const question = await questionService.generateQuestion(language, difficulty, category);
+
+      res.json({
+        success: true,
+        data: question
+      });
+    } catch (error) {
+      console.error('Error generating AI question:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to generate AI question'
+      });
+    }
+  }
+
+  /**
+   * Get AI-powered hint for a question
+   * POST /api/questions/:id/hint
+   * Body: { userAnswer?: number, timeSpent?: number }
+   */
+  static async getQuestionHint(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const { userAnswer, timeSpent } = req.body;
+
+      const hint = await questionService.generateHint(id as string, userAnswer, timeSpent);
+
+      res.json({
+        success: true,
+        data: { hint }
+      });
+    } catch (error) {
+      console.error('Error getting question hint:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to get question hint'
+      });
+    }
+  }
+
+  /**
+   * Analyze user code with AI
+   * POST /api/questions/analyze-code
+   * Body: { code: string, language: string, context?: string }
+   */
+  static async analyzeCode(req: Request, res: Response) {
+    try {
+      const { code, language, context } = req.body;
+
+      if (!code || !language) {
+        return res.status(400).json({
+          success: false,
+          error: 'Code and language are required'
+        });
+      }
+
+      const analysis = await questionService.analyzeUserCode(code, language, context);
+
+      res.json({
+        success: true,
+        data: analysis
+      });
+    } catch (error) {
+      console.error('Error analyzing code:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to analyze code'
+      });
+    }
+  }
+
+  /**
+   * Generate adaptive questions based on user's weak areas
+   * POST /api/questions/adaptive
+   * Body: { weakAreas: string[], language: string, difficulty: string, count?: number }
+   */
+  static async generateAdaptiveQuestions(req: Request, res: Response) {
+    try {
+      const { weakAreas, language, difficulty, count = 5 } = req.body;
+
+      if (!weakAreas || !Array.isArray(weakAreas) || !language || !difficulty) {
+        return res.status(400).json({
+          success: false,
+          error: 'Weak areas array, language, and difficulty are required'
+        });
+      }
+
+      const questions = await questionService.generateAdaptiveQuestions(
+        weakAreas,
+        language,
+        difficulty,
+        count
+      );
+
+      res.json({
+        success: true,
+        data: questions,
+        count: questions.length
+      });
+    } catch (error) {
+      console.error('Error generating adaptive questions:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to generate adaptive questions'
       });
     }
   }

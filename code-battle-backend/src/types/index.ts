@@ -24,16 +24,17 @@ export type QuestionType = 'multiple-choice' | 'coding' | 'concept' | 'os';
 
 export interface Question {
   id: string;
-  type: QuestionType;
-  difficulty: QuestionDifficulty;
-  language: ProgrammingLanguage;
-  title: string;
-  content: string;
-  options?: string[];
-  correctAnswer: string;
+  language: 'python' | 'java' | 'cpp';
+  difficulty: 'beginner' | 'intermediate' | 'advanced' | 'expert';
+  category: 'syntax' | 'algorithms' | 'data_structures' | 'oop' | 'debugging' | 'optimization';
+  question: string;
+  code?: string;
+  options: string[];
+  correctAnswer: number; // index of correct option
   explanation: string;
-  timeLimit: number;
   points: number;
+  timeLimit: number; // seconds
+  tags: string[];
 }
 
 export interface Battle {
@@ -44,7 +45,7 @@ export interface Battle {
   currentQuestionIndex: number;
   playerAnswers: {
     [playerId: string]: {
-      answers: (string | null)[];
+      answers: (number | null)[];
       timeTaken: number[];
     };
   };

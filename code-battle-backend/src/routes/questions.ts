@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { QuestionController } from '../controllers/QuestionController.js';
-import { authenticateToken } from '../middleware/auth.js';
+import { QuestionController } from '../controllers/QuestionController';
+import { authenticateToken } from '../middleware/auth';
 
 export const questionRoutes = Router();
 
@@ -36,3 +36,9 @@ questionRoutes.post('/practice', QuestionController.getPracticeQuestions);
 
 // Get recommended languages
 questionRoutes.post('/recommended-languages', QuestionController.getRecommendedLanguages);
+
+// AI-powered features
+questionRoutes.post('/ai-generate', QuestionController.generateAIQuestion);
+questionRoutes.post('/:id/hint', QuestionController.getQuestionHint);
+questionRoutes.post('/analyze-code', QuestionController.analyzeCode);
+questionRoutes.post('/adaptive', QuestionController.generateAdaptiveQuestions);

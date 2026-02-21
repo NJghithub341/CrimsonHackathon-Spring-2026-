@@ -68,7 +68,7 @@ export class SocketManager {
         battleId: string,
         userId: string,
         questionIndex: number,
-        answer: string,
+        answer: number,
         timeTaken: number
       }) => {
         try {

@@ -17,8 +17,8 @@ export class BattleService {
   async createBattle(player1Id: string, player2Id: string): Promise<string> {
     const battleId = uuidv4();
 
-    // Generate questions for the battle
-    const questions = await this.questionService.generateBattleQuestions();
+    // Generate questions for the battle (using legacy method for now)
+    const questions = await this.questionService.generateBattleQuestionsLegacy();
 
     const battle: Battle = {
       id: battleId,
@@ -48,7 +48,7 @@ export class BattleService {
     battleId: string,
     userId: string,
     questionIndex: number,
-    answer: string,
+    answer: number,
     timeTaken: number
   ): Promise<BattleResult> {
     const battle = this.battles.get(battleId);
