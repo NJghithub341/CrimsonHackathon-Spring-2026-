@@ -1,17 +1,20 @@
 import { Server as SocketIOServer, Socket } from 'socket.io';
 import { MatchmakingService } from './MatchmakingService';
 import { BattleService } from './BattleService';
+import ElevenLabsService from './ElevenLabsService';
 
 export class SocketManager {
   private io: SocketIOServer;
   private matchmakingService: MatchmakingService;
   private battleService: BattleService;
+  private audioService: ElevenLabsService;
   private connectedUsers: Map<string, string> = new Map(); // socketId -> userId
 
   constructor(io: SocketIOServer) {
     this.io = io;
     this.matchmakingService = new MatchmakingService();
     this.battleService = new BattleService();
+    this.audioService = new ElevenLabsService();
     this.setupSocketHandlers();
     this.setupMatchmakingEvents();
   }

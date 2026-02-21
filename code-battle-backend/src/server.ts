@@ -11,6 +11,7 @@ import { userRoutes } from './routes/users';
 import { battleRoutes } from './routes/battles';
 import { matchmakingRoutes } from './routes/matchmaking';
 import { questionRoutes } from './routes/questions';
+import { audioRoutes } from './routes/audio';
 
 import { errorHandler } from './middleware/errorHandler';
 import { SocketManager } from './services/SocketManager';
@@ -39,6 +40,9 @@ app.use(morgan('combined'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
+// Serve static audio files
+app.use('/audio', express.static('public/audio'));
+
 // Health check
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'OK', timestamp: new Date().toISOString() });
@@ -50,6 +54,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/battles', battleRoutes);
 app.use('/api/matchmaking', matchmakingRoutes);
 app.use('/api/questions', questionRoutes);
+app.use('/api/audio', audioRoutes);
 
 // Initialize Socket Manager
 const socketManager = new SocketManager(io);
