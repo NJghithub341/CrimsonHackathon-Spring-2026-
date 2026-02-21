@@ -1,13 +1,5 @@
-# CrimsonHackathon-Spring-2026-
-https://www.mlh.com/events/crimsoncode-hackathon-72/prizes
+# BattleCoder  
 
-THEME: 
-Reinventing the Wheel:
--new unique twist on a proven concept
--trying new things at the heart of inovation 
+BattleCoder is a fast paced chess style coding app that you can compete with players 1v1 and gain/lose elo. Aside from the matchmaking mode, you can practice and improve your coding skills by learning Python, Java, or C++ similar to duolingo but for programming.
 
-
-2:30 : Hacking with github and copilot
-
-- intro to google studio,
-  
+Level up, gain ex, and compete in the leaderboards. Users can also compete in wagers winning/losing Solana.
