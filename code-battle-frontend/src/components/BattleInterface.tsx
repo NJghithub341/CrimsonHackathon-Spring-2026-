@@ -223,10 +223,10 @@ export const BattleInterface: React.FC<BattleInterfaceProps> = ({
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'easy': return 'text-green-400 bg-green-900';
-      case 'medium': return 'text-yellow-400 bg-yellow-900';
-      case 'hard': return 'text-red-400 bg-red-900';
-      default: return 'text-gray-400 bg-gray-900';
+      case 'easy': return 'bg-pixel-success border-pixel';
+      case 'medium': return 'bg-pixel-warning border-pixel';
+      case 'hard': return 'bg-pixel-danger border-pixel';
+      default: return 'bg-gray-800 border-2 border-gray-600';
     }
   };
 
@@ -234,19 +234,28 @@ export const BattleInterface: React.FC<BattleInterfaceProps> = ({
     return Array.from({ length: 3 }, (_, i) => (
       <Heart
         key={i}
-        className={`w-6 h-6 ${i < health ? 'text-red-500 fill-current' : 'text-gray-600'}`}
-        style={{ imageRendering: 'pixelated' }}
+        className={`w-8 h-8 transition-all hover-glow ${i < health ? 'fill-current hover-bounce' : 'text-gray-600'}`}
+        style={{
+          color: i < health ? 'var(--pixel-danger)' : '#374151',
+          filter: i < health ? 'drop-shadow(0 0 10px var(--pixel-danger))' : 'none'
+        }}
       />
     ));
   };
 
   const renderCountdown = () => (
-    <div className="fixed inset-0 bg-black flex items-center justify-center z-50">
-      <div className="text-center">
-        <div className="text-8xl font-bold text-yellow-400 mb-8 pixel-font animate-pulse">
+    <div className="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-50">
+      <div className="text-center battle-panel p-12">
+        <div className="text-pixel-xl mb-8 pulse-glow" style={{
+          fontSize: '8rem',
+          color: 'var(--pixel-warning)',
+          textShadow: '0 0 30px var(--pixel-warning)'
+        }}>
           {Math.max(0, 3 - Math.floor((Date.now() % 4000) / 1000))}
         </div>
-        <div className="text-2xl text-white pixel-font">GET READY!</div>
+        <div className="text-pixel-lg" style={{ color: 'var(--pixel-primary)' }}>
+          ⚔️ GET READY TO BATTLE! ⚔️
+        </div>
       </div>
     </div>
   );
@@ -255,27 +264,32 @@ export const BattleInterface: React.FC<BattleInterfaceProps> = ({
     if (!currentQuestion) return null;
 
     return (
-      <div className="bg-gray-900 border-4 border-yellow-400 rounded-lg p-6 pixel-border">
+      <div className="card battle-panel">
         {/* Question header */}
         <div className="flex justify-between items-center mb-6">
-          <div className={`px-4 py-2 rounded pixel-border ${getDifficultyColor(currentQuestion.difficulty)}`}>
-            <span className="pixel-font font-bold">{currentQuestion.difficulty.toUpperCase()}</span>
+          <div className={`px-6 py-3 ${getDifficultyColor(currentQuestion.difficulty)} hover-glow`}>
+            <span className="text-pixel font-bold text-black">{currentQuestion.difficulty.toUpperCase()}</span>
           </div>
-          <div className="flex items-center space-x-2 text-yellow-400">
-            <Star className="w-5 h-5" />
-            <span className="pixel-font font-bold">{currentQuestion.points} PTS</span>
+          <div className="flex items-center space-x-3 text-pixel hover-glow" style={{ color: 'var(--pixel-warning)' }}>
+            <Star className="w-6 h-6" />
+            <span className="font-bold">⭐ {currentQuestion.points} PTS</span>
           </div>
         </div>
 
         {/* Question text */}
-        <div className="text-white text-lg pixel-font mb-6">
-          {currentQuestion.question}
+        <div className="text-pixel-lg mb-6" style={{ color: 'var(--pixel-light)' }}>
+          💡 {currentQuestion.question}
         </div>
 
         {/* Code block if present */}
         {currentQuestion.code && (
-          <div className="bg-black border-2 border-green-400 p-4 rounded pixel-border mb-6 font-mono text-green-400 overflow-x-auto">
-            <pre style={{ imageRendering: 'pixelated' }}>{currentQuestion.code}</pre>
+          <div className="bg-black border-pixel p-6 mb-6 font-mono overflow-x-auto hover-glow" style={{
+            borderColor: 'var(--pixel-primary)',
+            color: 'var(--pixel-primary)',
+            boxShadow: 'inset 0 0 20px rgba(0, 255, 136, 0.1)'
+          }}>
+            <div className="text-pixel mb-2" style={{ color: 'var(--pixel-accent)' }}>💻 CODE:</div>
+            <pre className="text-pixel">{currentQuestion.code}</pre>
           </div>
         )}
 
@@ -286,23 +300,40 @@ export const BattleInterface: React.FC<BattleInterfaceProps> = ({
               key={index}
               onClick={() => setSelectedAnswer(index)}
               disabled={showResult}
-              className={`w-full p-4 text-left pixel-border transition-all transform hover:scale-105 ${
+              className={`w-full p-4 text-left border-pixel transition-all hover-bounce ${
                 selectedAnswer === index
                   ? showResult
                     ? isCorrect && selectedAnswer === index
-                      ? 'bg-green-800 border-green-400 text-green-200'
-                      : 'bg-red-800 border-red-400 text-red-200'
-                    : 'bg-yellow-800 border-yellow-400 text-yellow-200'
+                      ? 'bg-pixel-success'
+                      : 'bg-pixel-danger'
+                    : 'bg-pixel-warning'
                   : showResult && index === currentQuestion.correctAnswer
-                  ? 'bg-green-800 border-green-400 text-green-200'
-                  : 'bg-gray-800 border-gray-600 text-gray-200 hover:bg-gray-700'
+                  ? 'bg-pixel-success'
+                  : 'bg-gray-800 hover:bg-gray-700 hover-glow'
               }`}
+              style={{
+                borderColor: selectedAnswer === index
+                  ? showResult
+                    ? isCorrect && selectedAnswer === index
+                      ? 'var(--pixel-success)'
+                      : 'var(--pixel-danger)'
+                    : 'var(--pixel-warning)'
+                  : showResult && index === currentQuestion.correctAnswer
+                  ? 'var(--pixel-success)'
+                  : 'var(--pixel-accent)',
+                color: selectedAnswer === index || (showResult && index === currentQuestion.correctAnswer)
+                  ? 'var(--pixel-dark)'
+                  : 'var(--pixel-light)'
+              }}
             >
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gray-700 border-2 border-gray-500 rounded flex items-center justify-center pixel-border">
-                  <span className="pixel-font font-bold">{String.fromCharCode(65 + index)}</span>
+              <div className="flex items-center space-x-4">
+                <div className="w-10 h-10 bg-black border-2 flex items-center justify-center font-bold" style={{
+                  borderColor: 'currentColor',
+                  color: 'var(--pixel-accent)'
+                }}>
+                  <span className="text-pixel">{String.fromCharCode(65 + index)}</span>
                 </div>
-                <span className="pixel-font">{option}</span>
+                <span className="text-pixel">{option}</span>
               </div>
             </button>
           ))}
@@ -314,15 +345,20 @@ export const BattleInterface: React.FC<BattleInterfaceProps> = ({
                 value={selectedAnswer}
                 onChange={(e) => setSelectedAnswer(e.target.value)}
                 disabled={showResult}
-                placeholder="Type your answer..."
-                className="flex-1 p-4 bg-gray-800 border-2 border-gray-600 text-white pixel-border pixel-font focus:border-yellow-400 focus:outline-none"
+                placeholder="💭 Type your answer..."
+                className="flex-1 p-4 bg-black border-pixel text-pixel font-mono focus:outline-none hover-glow"
+                style={{
+                  borderColor: 'var(--pixel-accent)',
+                  color: 'var(--pixel-primary)',
+                  backgroundColor: 'rgba(0, 0, 0, 0.8)'
+                }}
               />
               <button
                 onClick={() => handleAnswer()}
                 disabled={!selectedAnswer || showResult}
-                className="px-6 py-4 bg-yellow-600 hover:bg-yellow-500 disabled:bg-gray-600 border-2 border-yellow-400 text-black pixel-font font-bold pixel-border"
+                className="btn-pixel btn-primary text-pixel font-bold hover-bounce"
               >
-                SUBMIT
+                🚀 SUBMIT
               </button>
             </div>
           )}
@@ -330,13 +366,13 @@ export const BattleInterface: React.FC<BattleInterfaceProps> = ({
 
         {/* Submit button for multiple choice */}
         {currentQuestion.type === 'multiple-choice' && !showResult && (
-          <div className="mt-6 text-center">
+          <div className="mt-8 text-center">
             <button
               onClick={() => handleAnswer()}
               disabled={selectedAnswer === ''}
-              className="px-8 py-3 bg-yellow-600 hover:bg-yellow-500 disabled:bg-gray-600 border-2 border-yellow-400 text-black pixel-font font-bold pixel-border transform hover:scale-105 disabled:transform-none"
+              className="btn-pixel btn-success text-pixel font-bold hover-bounce pulse-glow"
             >
-              SUBMIT ANSWER
+              ⚔️ SUBMIT ANSWER ⚔️
             </button>
           </div>
         )}
@@ -345,28 +381,28 @@ export const BattleInterface: React.FC<BattleInterfaceProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-900 via-blue-900 to-black p-4 pixel-bg">
+    <div className="min-h-screen p-6">
       {/* Battle HUD */}
       <div className="max-w-6xl mx-auto">
         {/* Top bar with players */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-3 gap-6 mb-8">
           {/* Player 1 */}
-          <div className="bg-blue-800 border-4 border-blue-400 rounded-lg p-4 pixel-border">
+          <div className="card battle-panel bg-pixel-primary border-pixel hover-glow" style={{ borderColor: 'var(--pixel-primary)' }}>
             <div className="text-center">
-              <div className="text-4xl mb-2" style={{ imageRendering: 'pixelated' }}>
+              <div className="text-6xl mb-3 hover-bounce">
                 {player1.avatar}
               </div>
-              <div className="pixel-font font-bold text-blue-200 mb-2">
+              <div className="text-pixel-lg font-bold mb-3" style={{ color: 'var(--pixel-primary)' }}>
                 {player1.displayName}
               </div>
-              <div className="flex justify-center space-x-1 mb-2">
+              <div className="flex justify-center space-x-2 mb-3">
                 {getHealthBar(player1.health)}
               </div>
-              <div className="text-yellow-400 pixel-font font-bold">
-                {player1.score} PTS
+              <div className="text-pixel font-bold mb-2" style={{ color: 'var(--pixel-warning)' }}>
+                💰 {player1.score} PTS
               </div>
               {player1.streak > 1 && (
-                <div className="text-orange-400 pixel-font text-sm">
+                <div className="text-pixel pulse-glow" style={{ color: 'var(--pixel-orange)' }}>
                   🔥 {player1.streak}x STREAK
                 </div>
               )}
@@ -375,38 +411,41 @@ export const BattleInterface: React.FC<BattleInterfaceProps> = ({
 
           {/* Center - Timer and Question Counter */}
           <div className="text-center">
-            <div className="bg-yellow-900 border-4 border-yellow-400 rounded-lg p-4 pixel-border mb-4">
+            <div className="card bg-pixel-warning border-pixel mb-4 hover-glow pulse-glow" style={{ borderColor: 'var(--pixel-warning)' }}>
               <div className="flex items-center justify-center space-x-3">
-                <Clock className="w-6 h-6 text-yellow-400" />
-                <div className={`text-3xl pixel-font font-bold ${timeLeft <= 5 ? 'text-red-400 animate-pulse' : 'text-yellow-400'}`}>
-                  {timeLeft}
+                <Clock className="w-8 h-8" style={{ color: 'var(--pixel-dark)' }} />
+                <div className={`text-pixel-xl font-bold ${timeLeft <= 5 ? 'pulse-glow' : ''}`} style={{
+                  fontSize: '3rem',
+                  color: timeLeft <= 5 ? 'var(--pixel-danger)' : 'var(--pixel-dark)'
+                }}>
+                  ⏰ {timeLeft}
                 </div>
               </div>
             </div>
-            <div className="bg-gray-800 border-2 border-gray-600 rounded pixel-border p-2">
-              <div className="pixel-font text-gray-300">
-                Question {questionIndex + 1} of {sampleQuestions.length}
+            <div className="card bg-gray-800 border-pixel" style={{ borderColor: 'var(--pixel-accent)' }}>
+              <div className="text-pixel" style={{ color: 'var(--pixel-accent)' }}>
+                📊 Question {questionIndex + 1} of {sampleQuestions.length}
               </div>
             </div>
           </div>
 
           {/* Player 2 */}
-          <div className="bg-red-800 border-4 border-red-400 rounded-lg p-4 pixel-border">
+          <div className="card battle-panel bg-pixel-danger border-pixel hover-glow" style={{ borderColor: 'var(--pixel-danger)' }}>
             <div className="text-center">
-              <div className="text-4xl mb-2" style={{ imageRendering: 'pixelated' }}>
+              <div className="text-6xl mb-3 hover-bounce">
                 {player2.avatar}
               </div>
-              <div className="pixel-font font-bold text-red-200 mb-2">
+              <div className="text-pixel-lg font-bold mb-3" style={{ color: 'var(--pixel-danger)' }}>
                 {player2.displayName}
               </div>
-              <div className="flex justify-center space-x-1 mb-2">
+              <div className="flex justify-center space-x-2 mb-3">
                 {getHealthBar(player2.health)}
               </div>
-              <div className="text-yellow-400 pixel-font font-bold">
-                {player2.score} PTS
+              <div className="text-pixel font-bold mb-2" style={{ color: 'var(--pixel-warning)' }}>
+                💰 {player2.score} PTS
               </div>
               {player2.streak > 1 && (
-                <div className="text-orange-400 pixel-font text-sm">
+                <div className="text-pixel pulse-glow" style={{ color: 'var(--pixel-orange)' }}>
                   🔥 {player2.streak}x STREAK
                 </div>
               )}
@@ -426,42 +465,61 @@ export const BattleInterface: React.FC<BattleInterfaceProps> = ({
         {battlePhase === 'result' && (
           <div className="max-w-4xl mx-auto">
             {renderQuestion()}
-            <div className="mt-6 bg-gray-900 border-4 border-yellow-400 rounded-lg p-6 pixel-border">
-              <div className="text-center">
-                <div className={`text-6xl pixel-font font-bold mb-4 ${isCorrect ? 'text-green-400' : 'text-red-400'}`}>
-                  {isCorrect ? 'CORRECT!' : 'WRONG!'}
-                </div>
-                {isCorrect && (
-                  <div className="text-yellow-400 pixel-font text-xl">
-                    +{currentQuestion?.points} points!
-                  </div>
-                )}
+            <div className="mt-8 card battle-panel text-center">
+              <div className={`text-pixel-xl font-bold mb-6 pulse-glow`} style={{
+                fontSize: '4rem',
+                color: isCorrect ? 'var(--pixel-success)' : 'var(--pixel-danger)'
+              }}>
+                {isCorrect ? '✅ CORRECT!' : '❌ WRONG!'}
               </div>
+              {isCorrect && (
+                <div className="text-pixel-lg hover-bounce" style={{ color: 'var(--pixel-warning)' }}>
+                  💰 +{currentQuestion?.points} points!
+                </div>
+              )}
             </div>
           </div>
         )}
 
         {battlePhase === 'finished' && (
           <div className="max-w-4xl mx-auto text-center">
-            <div className="bg-gradient-to-r from-yellow-900 to-orange-900 border-4 border-yellow-400 rounded-lg p-8 pixel-border">
-              <div className="text-6xl pixel-font font-bold text-yellow-400 mb-6">
-                BATTLE COMPLETE!
+            <div className="card battle-panel bg-pixel-warning" style={{ borderColor: 'var(--pixel-warning)' }}>
+              <div className="text-pixel-xl font-bold mb-8 pulse-glow" style={{
+                fontSize: '4rem',
+                color: 'var(--pixel-dark)'
+              }}>
+                🏆 BATTLE COMPLETE! 🏆
               </div>
-              <div className="grid grid-cols-2 gap-8">
-                <div className="text-center">
-                  <div className="text-4xl mb-2">{player1.avatar}</div>
-                  <div className="pixel-font font-bold text-white">{player1.displayName}</div>
-                  <div className="text-2xl pixel-font font-bold text-yellow-400">{player1.score}</div>
+              <div className="grid grid-cols-2 gap-8 mb-8">
+                <div className="text-center hover-bounce">
+                  <div className="text-6xl mb-4">{player1.avatar}</div>
+                  <div className="text-pixel-lg font-bold mb-2" style={{ color: 'var(--pixel-primary)' }}>
+                    {player1.displayName}
+                  </div>
+                  <div className="text-pixel-xl font-bold" style={{ color: 'var(--pixel-dark)' }}>
+                    💰 {player1.score}
+                  </div>
                 </div>
-                <div className="text-center">
-                  <div className="text-4xl mb-2">{player2.avatar}</div>
-                  <div className="pixel-font font-bold text-white">{player2.displayName}</div>
-                  <div className="text-2xl pixel-font font-bold text-yellow-400">{player2.score}</div>
+                <div className="text-center hover-bounce">
+                  <div className="text-6xl mb-4">{player2.avatar}</div>
+                  <div className="text-pixel-lg font-bold mb-2" style={{ color: 'var(--pixel-danger)' }}>
+                    {player2.displayName}
+                  </div>
+                  <div className="text-pixel-xl font-bold" style={{ color: 'var(--pixel-dark)' }}>
+                    💰 {player2.score}
+                  </div>
                 </div>
               </div>
-              <div className="mt-6">
-                <div className={`text-4xl pixel-font font-bold ${player1.score > player2.score ? 'text-green-400' : player1.score < player2.score ? 'text-red-400' : 'text-yellow-400'}`}>
-                  {player1.score > player2.score ? 'VICTORY!' : player1.score < player2.score ? 'DEFEAT!' : 'DRAW!'}
+              <div>
+                <div className={`text-pixel-xl font-bold pulse-glow`} style={{
+                  fontSize: '3rem',
+                  color: player1.score > player2.score
+                    ? 'var(--pixel-success)'
+                    : player1.score < player2.score
+                      ? 'var(--pixel-danger)'
+                      : 'var(--pixel-accent)'
+                }}>
+                  {player1.score > player2.score ? '🎉 VICTORY!' : player1.score < player2.score ? '💀 DEFEAT!' : '🤝 DRAW!'}
                 </div>
               </div>
             </div>
@@ -470,21 +528,37 @@ export const BattleInterface: React.FC<BattleInterfaceProps> = ({
 
         {/* Answer status indicators */}
         {battlePhase === 'question' && (
-          <div className="max-w-4xl mx-auto mt-6">
-            <div className="grid grid-cols-2 gap-4">
-              <div className={`p-3 rounded pixel-border ${player1.answered ? 'bg-green-800 border-green-400' : 'bg-gray-800 border-gray-600'}`}>
-                <div className="flex items-center space-x-2">
-                  <div className="text-2xl">{player1.avatar}</div>
-                  <div className="pixel-font text-white">
-                    {player1.answered ? `Answered in ${player1.timeTaken?.toFixed(1)}s` : 'Thinking...'}
+          <div className="max-w-4xl mx-auto mt-8">
+            <div className="grid grid-cols-2 gap-6">
+              <div className={`card border-pixel hover-glow ${
+                player1.answered ? 'bg-pixel-success' : 'bg-gray-800'
+              }`} style={{
+                borderColor: player1.answered ? 'var(--pixel-success)' : 'var(--pixel-accent)'
+              }}>
+                <div className="flex items-center space-x-4">
+                  <div className="text-4xl hover-bounce">{player1.avatar}</div>
+                  <div className="text-pixel" style={{
+                    color: player1.answered ? 'var(--pixel-dark)' : 'var(--pixel-light)'
+                  }}>
+                    {player1.answered
+                      ? `⚡ Answered in ${player1.timeTaken?.toFixed(1)}s`
+                      : '🤔 Thinking...'}
                   </div>
                 </div>
               </div>
-              <div className={`p-3 rounded pixel-border ${player2.answered ? 'bg-green-800 border-green-400' : 'bg-gray-800 border-gray-600'}`}>
-                <div className="flex items-center space-x-2">
-                  <div className="text-2xl">{player2.avatar}</div>
-                  <div className="pixel-font text-white">
-                    {player2.answered ? `Answered in ${player2.timeTaken?.toFixed(1)}s` : 'Thinking...'}
+              <div className={`card border-pixel hover-glow ${
+                player2.answered ? 'bg-pixel-success' : 'bg-gray-800'
+              }`} style={{
+                borderColor: player2.answered ? 'var(--pixel-success)' : 'var(--pixel-accent)'
+              }}>
+                <div className="flex items-center space-x-4">
+                  <div className="text-4xl hover-bounce">{player2.avatar}</div>
+                  <div className="text-pixel" style={{
+                    color: player2.answered ? 'var(--pixel-dark)' : 'var(--pixel-light)'
+                  }}>
+                    {player2.answered
+                      ? `⚡ Answered in ${player2.timeTaken?.toFixed(1)}s`
+                      : '🤔 Thinking...'}
                   </div>
                 </div>
               </div>
@@ -493,35 +567,6 @@ export const BattleInterface: React.FC<BattleInterfaceProps> = ({
         )}
       </div>
 
-      {/* Pixel art styles */}
-      <style>{`
-        .pixel-font {
-          font-family: 'Courier New', monospace;
-          font-weight: bold;
-          text-shadow: 2px 2px 0px rgba(0,0,0,0.8);
-        }
-
-        .pixel-border {
-          border-style: solid;
-          image-rendering: pixelated;
-          border-radius: 0;
-        }
-
-        .pixel-bg {
-          background-image:
-            radial-gradient(circle at 1px 1px, rgba(255,255,255,0.1) 1px, transparent 0);
-          background-size: 20px 20px;
-          image-rendering: pixelated;
-        }
-
-        button {
-          image-rendering: pixelated;
-        }
-
-        * {
-          image-rendering: pixelated;
-        }
-      `}</style>
     </div>
   );
 };

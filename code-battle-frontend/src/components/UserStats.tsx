@@ -1,4 +1,6 @@
 import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useSpring, animated, config } from '@react-spring/web';
 import { Trophy, Target, Clock, Zap, Award, TrendingUp, Star, Code } from 'lucide-react';
 
 interface UserStatsData {
@@ -23,28 +25,102 @@ interface UserStatsProps {
 }
 
 export const UserStats: React.FC<UserStatsProps> = ({ stats }) => {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        delayChildren: 0.1,
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const cardVariants = {
+    hidden: {
+      opacity: 0,
+      y: 20,
+      scale: 0.95
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 12
+      }
+    }
+  };
+
   const StatCard: React.FC<{
     icon: React.ReactNode;
     label: string;
     value: string | number | React.ReactNode;
     color: string;
     subtitle?: string;
-  }> = ({ icon, label, value, color, subtitle }) => (
-    <div className="card p-4">
-      <div className="flex items-center space-x-3">
-        <div className={`p-2 rounded-lg ${color}`}>
-          {icon}
+    glowColor?: string;
+    index: number;
+  }> = ({ icon, label, value, color, subtitle, glowColor, index }) => {
+    const [isHovered, setIsHovered] = React.useState(false);
+
+    // Animated counter for numbers
+    const animatedValue = useSpring({
+      number: typeof value === 'number' ? value : 0,
+      from: { number: 0 },
+      config: config.slow,
+      delay: index * 100
+    });
+
+    // Icon bounce animation
+    const iconSpring = useSpring({
+      transform: isHovered ? 'scale(1.1) rotateZ(5deg)' : 'scale(1) rotateZ(0deg)',
+      config: config.wobbly
+    });
+
+    return (
+      <motion.div
+        variants={cardVariants}
+        className="card card-glow"
+        whileHover={{
+          y: -5,
+          scale: 1.02,
+          transition: { type: "spring", stiffness: 400, damping: 10 }
+        }}
+        whileTap={{ scale: 0.98 }}
+        onHoverStart={() => setIsHovered(true)}
+        onHoverEnd={() => setIsHovered(false)}
+      >
+        <div className="flex items-center space-x-4">
+          <animated.div
+            className={`stat-icon ${color}`}
+            style={{
+              color: glowColor,
+              ...iconSpring
+            }}
+          >
+            {icon}
+          </animated.div>
+          <div className="flex-1">
+            <div className="text-minecraft-xl" style={{ color: glowColor }}>
+              {typeof value === 'number' ? (
+                <animated.span>
+                  {animatedValue.number.to(n => Math.floor(n).toLocaleString())}
+                </animated.span>
+              ) : (
+                value
+              )}
+            </div>
+            <div className="text-minecraft-sm text-gray-300">{label}</div>
+            {subtitle && (
+              <div className="text-xs text-gray-400 mt-1">{subtitle}</div>
+            )}
+          </div>
         </div>
-        <div className="flex-1">
-          <div className="text-2xl font-bold text-gray-900">{value}</div>
-          <div className="text-sm text-gray-600">{label}</div>
-          {subtitle && (
-            <div className="text-xs text-gray-500">{subtitle}</div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
+      </motion.div>
+    );
+  };
 
   const formatTime = (seconds: number) => {
     if (seconds < 60) return `${seconds.toFixed(1)}s`;
@@ -65,129 +141,147 @@ export const UserStats: React.FC<UserStatsProps> = ({ stats }) => {
   };
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      className="space-y-8 p-6"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
       {/* Battle Statistics */}
-      <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-          <Trophy className="w-5 h-5 mr-2 text-yellow-600" />
-          Battle Statistics
-        </h3>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <motion.div variants={cardVariants}>
+        <motion.h3
+          className="text-minecraft-lg mb-6 flex items-center"
+          style={{ color: 'var(--pixel-warning)' }}
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 300 }}
+        >
+          <motion.div
+            animate={{ rotate: [0, 5, -5, 0] }}
+            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+          >
+            <Trophy className="w-6 h-6 mr-3" />
+          </motion.div>
+          ⚔️ BATTLE STATISTICS
+        </motion.h3>
+        <motion.div className="grid-pixel" variants={containerVariants}>
           <StatCard
-            icon={<Trophy className="w-6 h-6 text-yellow-600" />}
-            label="Battles Won"
+            icon={<Trophy className="w-8 h-8" />}
+            label="🏆 Battles Won"
             value={stats.battlesWon}
-            color="bg-yellow-100"
+            color="bg-pixel-warning"
+            glowColor="var(--pixel-warning)"
             subtitle={`${stats.totalBattles} total battles`}
+            index={0}
           />
           <StatCard
-            icon={<Target className="w-6 h-6 text-blue-600" />}
-            label="Win Rate"
-            value={
-              <span className={getWinRateColor(stats.winRate)}>
-                {stats.winRate.toFixed(1)}%
-              </span>
-            }
-            color="bg-blue-100"
+            icon={<Target className="w-8 h-8" />}
+            label="🎯 Win Rate"
+            value={`${stats.winRate.toFixed(1)}%`}
+            color="bg-pixel-primary"
+            glowColor="var(--pixel-primary)"
             subtitle={`${stats.battlesLost} losses`}
+            index={1}
           />
           <StatCard
-            icon={<Clock className="w-6 h-6 text-purple-600" />}
-            label="Avg Response Time"
+            icon={<Clock className="w-8 h-8" />}
+            label="⚡ Response Time"
             value={formatTime(stats.averageResponseTime)}
-            color="bg-purple-100"
+            color="bg-pixel-purple"
+            glowColor="var(--pixel-purple)"
+            index={2}
           />
           <StatCard
-            icon={<Zap className="w-6 h-6 text-green-600" />}
-            label="Current Streak"
+            icon={<Zap className="w-8 h-8" />}
+            label="🔥 Current Streak"
             value={stats.currentStreak}
-            color="bg-green-100"
+            color="bg-pixel-success"
+            glowColor="var(--pixel-success)"
             subtitle={`${stats.longestStreak} longest`}
+            index={3}
           />
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* Performance Metrics */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-          <Target className="w-5 h-5 mr-2 text-blue-600" />
-          Performance Metrics
+        <h3 className="text-pixel-lg mb-6 flex items-center pulse-glow" style={{ color: 'var(--pixel-accent)' }}>
+          <Target className="w-6 h-6 mr-3" />
+          📊 PERFORMANCE METRICS
         </h3>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid-pixel">
           <StatCard
-            icon={<Award className="w-6 h-6 text-green-600" />}
-            label="Questions Correct"
+            icon={<Award className="w-8 h-8" />}
+            label="✅ Questions Correct"
             value={stats.questionsCorrect}
-            color="bg-green-100"
+            color="bg-pixel-success"
+            glowColor="var(--pixel-success)"
             subtitle={`${stats.totalQuestions} total answered`}
           />
           <StatCard
-            icon={<TrendingUp className="w-6 h-6 text-blue-600" />}
-            label="Accuracy Rate"
-            value={
-              <span className={getAccuracyColor(stats.accuracy)}>
-                {stats.accuracy.toFixed(1)}%
-              </span>
-            }
-            color="bg-blue-100"
+            icon={<TrendingUp className="w-8 h-8" />}
+            label="📈 Accuracy Rate"
+            value={`${stats.accuracy.toFixed(1)}%`}
+            color="bg-pixel-accent"
+            glowColor="var(--pixel-accent)"
           />
           <StatCard
-            icon={<Code className="w-6 h-6 text-indigo-600" />}
-            label="Favorite Language"
-            value={stats.favoriteLanguage === 'cpp' ? 'C++' : stats.favoriteLanguage}
-            color="bg-indigo-100"
+            icon={<Code className="w-8 h-8" />}
+            label="💻 Favorite Language"
+            value={stats.favoriteLanguage === 'cpp' ? 'C++' : stats.favoriteLanguage.toUpperCase()}
+            color="bg-pixel-secondary"
+            glowColor="var(--pixel-secondary)"
           />
         </div>
       </div>
 
       {/* Learning Progress */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-          <Star className="w-5 h-5 mr-2 text-primary-600" />
-          Learning Progress
+        <h3 className="text-pixel-lg mb-6 flex items-center pulse-glow" style={{ color: 'var(--pixel-primary)' }}>
+          <Star className="w-6 h-6 mr-3" />
+          🎓 LEARNING PROGRESS
         </h3>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid-pixel">
           <StatCard
-            icon={<Star className="w-6 h-6 text-primary-600" />}
-            label="Total XP"
+            icon={<Star className="w-8 h-8" />}
+            label="⭐ Total XP"
             value={stats.totalXP.toLocaleString()}
-            color="bg-primary-100"
+            color="bg-pixel-primary"
+            glowColor="var(--pixel-primary)"
           />
           <StatCard
-            icon={<Award className="w-6 h-6 text-yellow-600" />}
-            label="Current Level"
-            value={stats.level}
-            color="bg-yellow-100"
+            icon={<Award className="w-8 h-8" />}
+            label="🏅 Current Level"
+            value={`LV.${stats.level}`}
+            color="bg-pixel-warning"
+            glowColor="var(--pixel-warning)"
             subtitle={`${stats.totalXP % 1000}/1000 to next`}
           />
           <StatCard
-            icon={<Target className="w-6 h-6 text-green-600" />}
-            label="Practice Sessions"
+            icon={<Target className="w-8 h-8" />}
+            label="🎯 Practice Sessions"
             value={stats.practiceSessionsCompleted}
-            color="bg-green-100"
+            color="bg-pixel-success"
+            glowColor="var(--pixel-success)"
             subtitle="Completed"
           />
         </div>
       </div>
 
       {/* Detailed Performance Breakdown */}
-      <div className="card">
-        <h4 className="font-semibold text-gray-900 mb-4">Performance Breakdown</h4>
-        <div className="space-y-4">
+      <div className="card battle-panel">
+        <h4 className="text-pixel-lg mb-6" style={{ color: 'var(--pixel-accent)' }}>⚡ PERFORMANCE BREAKDOWN</h4>
+        <div className="space-y-6">
           {/* Win Rate Progress Bar */}
           <div>
-            <div className="flex justify-between text-sm text-gray-600 mb-1">
-              <span>Win Rate</span>
-              <span className={getWinRateColor(stats.winRate)}>
+            <div className="flex justify-between text-pixel mb-2">
+              <span>🏆 Win Rate</span>
+              <span style={{ color: 'var(--pixel-primary)' }}>
                 {stats.winRate.toFixed(1)}%
               </span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
+            <div className="progress-bar">
               <div
-                className={`h-2 rounded-full ${
-                  stats.winRate >= 70 ? 'bg-green-500' :
-                  stats.winRate >= 50 ? 'bg-yellow-500' : 'bg-red-500'
-                }`}
+                className="progress-fill"
                 style={{ width: `${stats.winRate}%` }}
               />
             </div>
@@ -195,33 +289,33 @@ export const UserStats: React.FC<UserStatsProps> = ({ stats }) => {
 
           {/* Accuracy Progress Bar */}
           <div>
-            <div className="flex justify-between text-sm text-gray-600 mb-1">
-              <span>Answer Accuracy</span>
-              <span className={getAccuracyColor(stats.accuracy)}>
+            <div className="flex justify-between text-pixel mb-2">
+              <span>🎯 Answer Accuracy</span>
+              <span style={{ color: 'var(--pixel-success)' }}>
                 {stats.accuracy.toFixed(1)}%
               </span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
+            <div className="progress-bar">
               <div
-                className={`h-2 rounded-full ${
-                  stats.accuracy >= 80 ? 'bg-green-500' :
-                  stats.accuracy >= 60 ? 'bg-yellow-500' : 'bg-red-500'
-                }`}
-                style={{ width: `${stats.accuracy}%` }}
+                className="progress-fill"
+                style={{ width: `${stats.accuracy}%`, background: 'linear-gradient(90deg, var(--pixel-success), var(--pixel-primary))' }}
               />
             </div>
           </div>
 
           {/* Level Progress Bar */}
           <div>
-            <div className="flex justify-between text-sm text-gray-600 mb-1">
-              <span>Level {stats.level} Progress</span>
-              <span>{stats.totalXP % 1000}/1000 XP</span>
+            <div className="flex justify-between text-pixel mb-2">
+              <span>🏅 Level {stats.level} Progress</span>
+              <span style={{ color: 'var(--pixel-warning)' }}>{stats.totalXP % 1000}/1000 XP</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
+            <div className="progress-bar">
               <div
-                className="bg-primary-600 h-2 rounded-full"
-                style={{ width: `${(stats.totalXP % 1000) / 10}%` }}
+                className="progress-fill"
+                style={{
+                  width: `${(stats.totalXP % 1000) / 10}%`,
+                  background: 'linear-gradient(90deg, var(--pixel-warning), var(--pixel-orange))'
+                }}
               />
             </div>
           </div>
@@ -229,22 +323,22 @@ export const UserStats: React.FC<UserStatsProps> = ({ stats }) => {
       </div>
 
       {/* Quick Stats Summary */}
-      <div className="grid md:grid-cols-2 gap-4">
-        <div className="card bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500">
-          <h4 className="font-semibold text-blue-900 mb-2">Battle Summary</h4>
-          <div className="text-sm text-blue-800 space-y-1">
-            <div>• {stats.battlesWon} victories out of {stats.totalBattles} battles</div>
-            <div>• {stats.currentStreak} game win streak</div>
-            <div>• Average {formatTime(stats.averageResponseTime)} response time</div>
+      <div className="grid md:grid-cols-2 gap-6">
+        <div className="card bg-pixel-primary border-pixel hover-glow" style={{ borderColor: 'var(--pixel-primary)' }}>
+          <h4 className="text-pixel-lg mb-4" style={{ color: 'var(--pixel-primary)' }}>⚔️ BATTLE SUMMARY</h4>
+          <div className="text-pixel space-y-2 text-gray-300">
+            <div>🏆 {stats.battlesWon} victories out of {stats.totalBattles} battles</div>
+            <div>🔥 {stats.currentStreak} game win streak</div>
+            <div>⚡ Average {formatTime(stats.averageResponseTime)} response time</div>
           </div>
         </div>
 
-        <div className="card bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500">
-          <h4 className="font-semibold text-green-900 mb-2">Learning Summary</h4>
-          <div className="text-sm text-green-800 space-y-1">
-            <div>• Level {stats.level} with {stats.totalXP.toLocaleString()} XP</div>
-            <div>• {stats.accuracy.toFixed(1)}% accuracy rate</div>
-            <div>• {stats.practiceSessionsCompleted} practice sessions completed</div>
+        <div className="card bg-pixel-success border-pixel hover-glow" style={{ borderColor: 'var(--pixel-success)' }}>
+          <h4 className="text-pixel-lg mb-4" style={{ color: 'var(--pixel-success)' }}>🎓 LEARNING SUMMARY</h4>
+          <div className="text-pixel space-y-2 text-gray-300">
+            <div>🏅 Level {stats.level} with {stats.totalXP.toLocaleString()} XP</div>
+            <div>📈 {stats.accuracy.toFixed(1)}% accuracy rate</div>
+            <div>🎯 {stats.practiceSessionsCompleted} practice sessions completed</div>
           </div>
         </div>
       </div>

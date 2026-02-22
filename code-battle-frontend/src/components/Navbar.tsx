@@ -1,5 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { useSpring, animated } from '@react-spring/web';
 import { useAuth } from '../context/AuthContext';
 import { LogOut, User, Sword, BookOpen, Home } from 'lucide-react';
 
@@ -16,89 +18,236 @@ export const Navbar: React.FC = () => {
     }
   };
 
+  // Logo animation
+  const logoSpring = useSpring({
+    from: { opacity: 0, transform: 'translateX(-50px) scale(0.8)' },
+    to: { opacity: 1, transform: 'translateX(0px) scale(1)' },
+    delay: 100
+  });
+
+  const navItemVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { type: "spring", stiffness: 100, damping: 15 }
+    }
+  };
+
   return (
-    <nav className="bg-white shadow-md border-b border-gray-200">
-      <div className="container mx-auto px-4">
+    <motion.nav
+      className="border-pixel p-4"
+      style={{
+        borderColor: 'var(--pixel-primary)',
+        borderBottomWidth: '3px',
+        backgroundColor: 'rgba(0, 0, 0, 0.9)',
+        backdropFilter: 'blur(10px)'
+      }}
+      initial={{ y: -80 }}
+      animate={{ y: 0 }}
+      transition={{ type: "spring", stiffness: 100, damping: 20 }}
+    >
+      <div className="container mx-auto">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-8">
-            <Link to="/" className="flex items-center space-x-2 text-primary-600 font-bold text-xl">
-              <Sword className="w-6 h-6" />
-              <span>CodeBattle</span>
-            </Link>
+            <animated.div style={logoSpring}>
+              <motion.div
+                whileHover={{
+                  scale: 1.05,
+                  textShadow: '0 0 20px var(--pixel-primary)'
+                }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link
+                  to="/"
+                  className="flex items-center space-x-3 text-minecraft-lg font-bold"
+                  style={{ color: 'var(--pixel-primary)' }}
+                >
+                  <motion.div
+                    animate={{ rotate: [0, 5, -5, 0] }}
+                    transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+                  >
+                    <Sword className="w-8 h-8" />
+                  </motion.div>
+                  <span>⚔️ CODEBATTLE</span>
+                </Link>
+              </motion.div>
+            </animated.div>
 
             {currentUser && (
-              <div className="hidden md:flex items-center space-x-6">
-                <Link
-                  to="/dashboard"
-                  className="flex items-center space-x-1 text-gray-600 hover:text-primary-600 transition-colors"
-                >
-                  <Home className="w-4 h-4" />
-                  <span>Dashboard</span>
-                </Link>
+              <motion.div
+                className="hidden md:flex items-center space-x-6"
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  visible: {
+                    transition: {
+                      delayChildren: 0.3,
+                      staggerChildren: 0.1
+                    }
+                  }
+                }}
+              >
+                <motion.div variants={navItemVariants}>
+                  <motion.div
+                    whileHover={{ y: -2, scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Link
+                      to="/dashboard"
+                      className="flex items-center space-x-2 text-minecraft transition-all"
+                      style={{ color: 'var(--pixel-light)' }}
+                    >
+                      <Home className="w-5 h-5" />
+                      <span>🏠 DASHBOARD</span>
+                    </Link>
+                  </motion.div>
+                </motion.div>
 
-                <Link
-                  to="/learn"
-                  className="flex items-center space-x-1 text-gray-600 hover:text-primary-600 transition-colors"
-                >
-                  <BookOpen className="w-4 h-4" />
-                  <span>Learn</span>
-                </Link>
+                <motion.div variants={navItemVariants}>
+                  <motion.div
+                    whileHover={{ y: -2, scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Link
+                      to="/learn"
+                      className="flex items-center space-x-2 text-minecraft transition-all"
+                      style={{ color: 'var(--pixel-light)' }}
+                    >
+                      <BookOpen className="w-5 h-5" />
+                      <span>📚 LEARN</span>
+                    </Link>
+                  </motion.div>
+                </motion.div>
 
-                <Link
-                  to="/matchmaking"
-                  className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-                >
-                  Find Battle
-                </Link>
-              </div>
+                <motion.div variants={navItemVariants}>
+                  <motion.div
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    animate={{
+                      boxShadow: [
+                        '0 0 20px var(--pixel-danger)',
+                        '0 0 40px var(--pixel-danger)',
+                        '0 0 20px var(--pixel-danger)'
+                      ]
+                    }}
+                    transition={{ repeat: Infinity, duration: 2 }}
+                  >
+                    <Link
+                      to="/matchmaking"
+                      className="btn-pixel btn-danger text-minecraft font-bold"
+                    >
+                      ⚔️ FIND BATTLE
+                    </Link>
+                  </motion.div>
+                </motion.div>
+              </motion.div>
             )}
           </div>
 
-          <div className="flex items-center space-x-4">
+          <motion.div
+            className="flex items-center space-x-4"
+            initial="hidden"
+            animate="visible"
+            variants={{
+              visible: {
+                transition: {
+                  delayChildren: 0.4,
+                  staggerChildren: 0.1
+                }
+              }
+            }}
+          >
             {currentUser ? (
               <>
-                <div className="hidden md:flex items-center space-x-2 text-sm">
-                  <span className="elo-badge bg-primary-100 text-primary-800">
-                    ELO: {currentUser.elo}
-                  </span>
-                  <span className="text-gray-600">Level {currentUser.level}</span>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <Link
-                    to="/profile"
-                    className="flex items-center space-x-1 text-gray-600 hover:text-primary-600 transition-colors"
+                <motion.div
+                  className="hidden md:flex items-center space-x-3"
+                  variants={navItemVariants}
+                >
+                  <motion.div
+                    className="bg-pixel-warning border-pixel px-3 py-1"
+                    whileHover={{
+                      scale: 1.05,
+                      boxShadow: '0 0 20px var(--pixel-warning)'
+                    }}
                   >
-                    <User className="w-4 h-4" />
-                    <span className="hidden md:inline">{currentUser.displayName}</span>
-                  </Link>
+                    <span className="text-minecraft-sm font-bold text-black">🏆 ELO: {currentUser.elo}</span>
+                  </motion.div>
+                  <motion.span
+                    className="text-minecraft-sm"
+                    style={{ color: 'var(--pixel-accent)' }}
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    ⭐ Level {currentUser.level}
+                  </motion.span>
+                </motion.div>
 
-                  <button
+                <motion.div
+                  className="flex items-center space-x-3"
+                  variants={navItemVariants}
+                >
+                  <motion.div
+                    whileHover={{ y: -2, scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Link
+                      to="/profile"
+                      className="flex items-center space-x-2 text-minecraft transition-all"
+                      style={{ color: 'var(--pixel-success)' }}
+                    >
+                      <User className="w-5 h-5" />
+                      <span className="hidden md:inline">👤 {currentUser.displayName}</span>
+                    </Link>
+                  </motion.div>
+
+                  <motion.button
                     onClick={handleLogout}
-                    className="flex items-center space-x-1 text-gray-600 hover:text-red-600 transition-colors p-2"
+                    className="flex items-center space-x-1 text-minecraft transition-all p-2"
+                    style={{ color: 'var(--pixel-danger)' }}
                     title="Logout"
+                    whileHover={{
+                      scale: 1.05,
+                      y: -2,
+                      textShadow: '0 0 10px var(--pixel-danger)'
+                    }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    <LogOut className="w-4 h-4" />
-                  </button>
-                </div>
+                    <LogOut className="w-5 h-5" />
+                    <span className="hidden md:inline">🚪 LOGOUT</span>
+                  </motion.button>
+                </motion.div>
               </>
             ) : (
-              <div className="flex items-center space-x-4">
-                <Link
-                  to="/login"
-                  className="text-gray-600 hover:text-primary-600 transition-colors"
+              <motion.div
+                className="flex items-center space-x-4"
+                variants={navItemVariants}
+              >
+                <motion.div
+                  whileHover={{ y: -2, scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  Sign In
-                </Link>
-                <Link
-                  to="/register"
-                  className="btn-primary"
+                  <Link
+                    to="/login"
+                    className="text-minecraft transition-all"
+                    style={{ color: 'var(--pixel-accent)' }}
+                  >
+                    👤 SIGN IN
+                  </Link>
+                </motion.div>
+                <motion.div
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  Get Started
-                </Link>
-              </div>
+                  <Link
+                    to="/register"
+                    className="btn-pixel btn-primary text-minecraft font-bold"
+                  >
+                    🚀 GET STARTED
+                  </Link>
+                </motion.div>
+              </motion.div>
             )}
-          </div>
+          </motion.div>
         </div>
       </div>
     </nav>
