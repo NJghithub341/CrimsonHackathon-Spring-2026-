@@ -65,40 +65,37 @@ build_backend() {
     print_status "Backend build completed"
 }
 
-# Deploy to Amplify
+# Deploy to Vercel
 deploy_frontend() {
-    print_status "Deploying frontend to AWS Amplify..."
+    print_status "Deploying frontend to Vercel..."
     print_warning "Please ensure you have:"
-    echo "  1. Created an Amplify app in AWS Console"
-    echo "  2. Connected it to your GitHub repository"
-    echo "  3. Set up environment variables in Amplify Console"
+    echo "  1. Created a Vercel account at vercel.com"
+    echo "  2. Connected your GitHub repository"
+    echo "  3. Selected the code-battle-frontend folder"
+    echo "  4. Set environment variables in Vercel dashboard"
     echo ""
-    echo "The amplify.yml file has been configured for automatic deployments."
-    echo "Push your code to trigger a deployment."
+    echo "Vercel will auto-detect Vite and deploy automatically."
+    echo "Check DEPLOY.md for detailed instructions."
 }
 
-# Deploy backend to Elastic Beanstalk
+# Deploy backend to Railway
 deploy_backend() {
-    print_status "Preparing backend for Elastic Beanstalk deployment..."
-
-    # Create deployment package
-    cd code-battle-backend
-    zip -r ../codebattle-backend-$(date +%Y%m%d-%H%M%S).zip . \
-        -x "node_modules/*" "src/*" "*.log" ".env" "*.md" "docs/*"
-    cd ..
-
-    print_status "Backend deployment package created"
+    print_status "Deploying backend to Railway..."
     print_warning "Please:"
-    echo "  1. Create an Elastic Beanstalk application in AWS Console"
-    echo "  2. Upload the generated zip file"
-    echo "  3. Configure environment variables in EB Console:"
-    echo "     - JWT_SECRET"
+    echo "  1. Create a Railway account at railway.app"
+    echo "  2. Create new project from GitHub repo"
+    echo "  3. Select the code-battle-backend folder"
+    echo "  4. Set environment variables in Railway console:"
+    echo "     - NODE_ENV=production"
+    echo "     - JWT_SECRET (generate with: openssl rand -base64 32)"
     echo "     - FIREBASE_PROJECT_ID"
     echo "     - FIREBASE_PRIVATE_KEY"
     echo "     - FIREBASE_CLIENT_EMAIL"
     echo "     - GOOGLE_GEMINI_API_KEY"
     echo "     - ELEVENLABS_API_KEY"
-    echo "     - FRONTEND_URL"
+    echo "     - FRONTEND_URL (your Vercel URL)"
+    echo ""
+    echo "Railway offers $5 free credits monthly - perfect for demos!"
 }
 
 # Alternative deployment info
@@ -114,7 +111,7 @@ show_alternatives() {
 main() {
     echo "Select deployment option:"
     echo "1) Build only (prepare for manual deployment)"
-    echo "2) AWS Amplify + Elastic Beanstalk (recommended)"
+    echo "2) Vercel + Railway (FREE - recommended)"
     echo "3) Show alternative deployment options"
     echo "4) Full local build and test"
     read -p "Enter your choice (1-4): " choice
@@ -127,7 +124,6 @@ main() {
             print_status "Build completed. Ready for manual deployment."
             ;;
         2)
-            check_aws_cli
             check_node
             build_frontend
             build_backend
