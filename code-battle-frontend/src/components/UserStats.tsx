@@ -61,8 +61,8 @@ export const UserStats: React.FC<UserStatsProps> = ({ stats }) => {
     color: string;
     subtitle?: string;
     glowColor?: string;
-    index: number;
-  }> = ({ icon, label, value, color, subtitle, glowColor, index }) => {
+    index?: number;
+  }> = ({ icon, label, value, color, subtitle, glowColor, index = 0 }) => {
     const [isHovered, setIsHovered] = React.useState(false);
 
     // Animated counter for numbers
