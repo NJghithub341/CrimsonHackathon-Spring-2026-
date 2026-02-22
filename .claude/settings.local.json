@@ -3,7 +3,10 @@
     "allow": [
       "Bash(node:*)",
       "Bash(cd:*)",
-      "Bash(openssl rand:*)"
+      "Bash(openssl rand:*)",
+      "Bash(cd \"C:\\\\Users\\\\edmel\\\\Desktop\\\\CrimsonHackathon-Spring-2026-\\\\code-battle-frontend\" && npm run build 2>&1)",
+      "Bash(cd \"C:\\\\Users\\\\edmel\\\\Desktop\\\\CrimsonHackathon-Spring-2026-\\\\code-battle-frontend\" && npx vite build 2>&1)",
+      "Bash(tail:*)"
     ]
   }
 }
