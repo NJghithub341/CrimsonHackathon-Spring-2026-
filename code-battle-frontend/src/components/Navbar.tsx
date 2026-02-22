@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LogOut, User, Sword } from 'lucide-react';
+import { Sword } from 'lucide-react';
 
 const sans = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
 
@@ -9,7 +9,7 @@ export const Navbar: React.FC = () => {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
+  const handleLeave = async () => {
     try {
       await logout();
       navigate('/');
@@ -33,110 +33,77 @@ export const Navbar: React.FC = () => {
         maxWidth: '1200px',
         margin: '0 auto',
         padding: '0 24px',
-        height: '56px',
+        height: '52px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
       }}>
 
         {/* Left — wordmark + nav links */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
           <Link to="/" style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '8px',
+            gap: '7px',
             textDecoration: 'none',
             color: '#ffffff',
-            fontSize: '15px',
+            fontSize: '14px',
             fontWeight: '700',
             letterSpacing: '-0.02em',
           }}>
-            <Sword size={18} style={{ color: 'rgba(255,255,255,0.7)' }} />
+            <Sword size={16} style={{ color: 'rgba(255,255,255,0.5)' }} />
             CodeBattle
           </Link>
 
           {currentUser && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-              <Link to="/dashboard" style={navLinkStyle}>Dashboard</Link>
-              <Link to="/learn" style={navLinkStyle}>Learn</Link>
-              <Link to="/matchmaking" style={navLinkStyle}>Battle</Link>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+              <Link to="/matchmaking" style={navLink}>Battle</Link>
+              <Link to="/dashboard" style={navLink}>Dashboard</Link>
+              <Link to="/learn" style={navLink}>Learn</Link>
             </div>
           )}
         </div>
 
-        {/* Right — auth controls */}
+        {/* Right — player info + leave */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           {currentUser ? (
             <>
-              {/* ELO + Level */}
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                paddingRight: '16px',
-                borderRight: '1px solid rgba(255,255,255,0.1)',
-              }}>
-                <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.45)', fontVariantNumeric: 'tabular-nums' }}>
-                  ELO {currentUser.elo}
-                </span>
-                <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.3)' }}>
-                  Lv {currentUser.level}
-                </span>
-              </div>
-
-              {/* Profile link */}
-              <Link to="/profile" style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                textDecoration: 'none',
-                color: 'rgba(255,255,255,0.65)',
+              <span style={{
                 fontSize: '13px',
-                fontWeight: '500',
+                color: 'rgba(255,255,255,0.4)',
+                fontVariantNumeric: 'tabular-nums',
               }}>
-                <User size={15} />
-                <span style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {currentUser.displayName}
+                {currentUser.displayName}
+                <span style={{ color: 'rgba(255,255,255,0.2)', marginLeft: '8px' }}>
+                  {currentUser.elo} ELO
                 </span>
-              </Link>
+              </span>
 
-              {/* Logout */}
               <button
-                onClick={handleLogout}
-                title="Sign out"
+                onClick={handleLeave}
+                title="Leave and return to home"
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '5px',
                   background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  color: 'rgba(255,255,255,0.38)',
-                  fontSize: '13px',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '6px',
+                  padding: '5px 12px',
+                  color: 'rgba(255,255,255,0.35)',
                   fontFamily: sans,
-                  padding: '4px',
+                  fontSize: '12px',
+                  cursor: 'pointer',
                 }}
               >
-                <LogOut size={15} />
+                Leave
               </button>
             </>
           ) : (
-            <>
-              <Link to="/login" style={navLinkStyle}>Sign In</Link>
-              <Link to="/register" style={{
-                display: 'inline-block',
-                padding: '7px 16px',
-                borderRadius: '6px',
-                background: '#ffffff',
-                color: '#0f0f23',
-                fontSize: '13px',
-                fontWeight: '600',
-                textDecoration: 'none',
-                letterSpacing: '-0.01em',
-              }}>
-                Get Started
-              </Link>
-            </>
+            <Link to="/" style={{
+              fontSize: '13px',
+              color: 'rgba(255,255,255,0.4)',
+              textDecoration: 'none',
+            }}>
+              Play →
+            </Link>
           )}
         </div>
 
@@ -145,10 +112,9 @@ export const Navbar: React.FC = () => {
   );
 };
 
-const navLinkStyle: React.CSSProperties = {
+const navLink: React.CSSProperties = {
   textDecoration: 'none',
-  color: 'rgba(255,255,255,0.55)',
-  fontSize: '14px',
-  fontWeight: '400',
+  color: 'rgba(255,255,255,0.5)',
+  fontSize: '13px',
   letterSpacing: '-0.01em',
 };

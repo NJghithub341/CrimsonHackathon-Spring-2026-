@@ -3,15 +3,13 @@ import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-
 import { AuthProvider } from './context/AuthContext';
 import { Navbar } from './components/Navbar';
 import { Home } from './pages/Home';
-import { Login } from './pages/Login';
-import { Register } from './pages/Register';
 import { Dashboard } from './pages/Dashboard';
 import { Learn } from './pages/Learn';
 import { Battle } from './pages/Battle';
 import { Matchmaking } from './pages/Matchmaking';
 import { Profile } from './pages/Profile';
 
-// Layout for authenticated/app pages — includes Navbar and container
+// App pages that share the Navbar + container layout
 const AppLayout = () => (
   <>
     <Navbar />
@@ -26,13 +24,15 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          {/* Auth pages — full-bleed, no Navbar */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          {/* Home — full-bleed, no Navbar (entry point / name screen) */}
+          <Route path="/" element={<Home />} />
 
-          {/* App pages — Navbar + container layout */}
+          {/* Redirect old auth routes back to home */}
+          <Route path="/login" element={<Navigate to="/" replace />} />
+          <Route path="/register" element={<Navigate to="/" replace />} />
+
+          {/* App pages — Navbar + container */}
           <Route element={<AppLayout />}>
-            <Route path="/" element={<Home />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/learn" element={<Learn />} />
             <Route path="/battle/:battleId" element={<Battle />} />
