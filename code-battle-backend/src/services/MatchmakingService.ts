@@ -163,6 +163,16 @@ export class MatchmakingService extends EventEmitter {
     return this.matches.get(matchId);
   }
 
+  public getPendingMatchForUser(userId: string): Match | undefined {
+    for (const match of this.matches.values()) {
+      if (match.status === 'pending') {
+        const isPlayer = match.player1.userId === userId || match.player2.userId === userId;
+        if (isPlayer) return match;
+      }
+    }
+    return undefined;
+  }
+
   public getAllMatches(): Match[] {
     return Array.from(this.matches.values());
   }

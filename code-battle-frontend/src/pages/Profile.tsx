@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
+import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { EloChart } from '../components/EloChart';
 import { UserStats } from '../components/UserStats';
 import { Edit, Save, X, User, Trophy, BarChart3 } from 'lucide-react';
 
 export const Profile: React.FC = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, loading } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
     displayName: currentUser?.displayName || '',
     preferredLanguages: currentUser?.preferredLanguages || [],
   });
 
-  if (!currentUser) {
-    return <div>Please log in to view your profile.</div>;
-  }
+  if (loading) return null;
+  if (!currentUser) return <Navigate to="/" replace />;
 
   // Mock data for demonstration - would come from backend
   const mockStats = {

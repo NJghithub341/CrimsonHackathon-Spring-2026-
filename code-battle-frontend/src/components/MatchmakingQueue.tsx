@@ -164,10 +164,14 @@ export const MatchmakingQueue: React.FC<MatchmakingQueueProps> = ({ onMatchReady
       const data = await response.json();
 
       if (data.success) {
-        const { inQueue: stillInQueue, queuePosition: newPosition, queueStats: newStats } = data.data;
+        const { inQueue: stillInQueue, queuePosition: newPosition, queueStats: newStats, pendingMatch } = data.data;
 
-        if (!stillInQueue && inQueue) {
-          // User was removed from queue or found a match
+        // Match found — surface it immediately
+        if (pendingMatch) {
+          setCurrentMatch(pendingMatch);
+          setInQueue(false);
+          setQueuePosition(null);
+        } else if (!stillInQueue && inQueue) {
           setInQueue(false);
           setQueuePosition(null);
         } else if (stillInQueue) {

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { EloChart } from '../components/EloChart';
 import { UserStats } from '../components/UserStats';
@@ -6,11 +7,10 @@ import { LearningTracks } from '../components/LearningTracks';
 import { Zap, Target, BookOpen, Trophy } from 'lucide-react';
 
 export const Dashboard: React.FC = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, loading } = useAuth();
 
-  if (!currentUser) {
-    return <div>Please log in to access your dashboard.</div>;
-  }
+  if (loading) return null;
+  if (!currentUser) return <Navigate to="/" replace />;
 
   // Mock data for demonstration - would come from backend
   const mockStats = {

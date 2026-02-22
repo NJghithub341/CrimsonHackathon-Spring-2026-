@@ -77,6 +77,7 @@ export class MatchmakingController {
 
       const queuePosition = this.matchmakingService.getQueuePosition(req.user.id);
       const queueStats = this.matchmakingService.getQueueStats();
+      const pendingMatch = this.matchmakingService.getPendingMatchForUser(req.user.id);
 
       res.json({
         success: true,
@@ -85,6 +86,7 @@ export class MatchmakingController {
           queuePosition: queuePosition || null,
           estimatedWaitTime: queuePosition > 0 ? this.calculateEstimatedWaitTime(req.user.elo) : null,
           queueStats,
+          pendingMatch: pendingMatch || null,
         },
       });
     } catch (error) {
