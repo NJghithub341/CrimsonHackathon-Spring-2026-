@@ -2,7 +2,7 @@ import { Response } from 'express';
 import { AuthRequest, MatchmakingRequest } from '../types';
 import { MatchmakingService } from '../services/MatchmakingService';
 import { AppError } from '../middleware/errorHandler';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 
 export class MatchmakingController {
   private matchmakingService: MatchmakingService;
@@ -24,7 +24,7 @@ export class MatchmakingController {
       }
 
       const matchmakingRequest: MatchmakingRequest = {
-        id: uuidv4(),
+        id: randomUUID(),
         userId: req.user.id,
         displayName: req.user.displayName,
         elo: req.user.elo,

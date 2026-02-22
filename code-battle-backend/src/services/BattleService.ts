@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 import { Battle, Question } from '../types';
 import { QuestionService } from './QuestionService';
 import { EloService, BattlePerformance, BattleResult as EloBattleResult } from './EloService';
@@ -15,7 +15,7 @@ export class BattleService {
   private eloService = new EloService();
 
   async createBattle(player1Id: string, player2Id: string): Promise<string> {
-    const battleId = uuidv4();
+    const battleId = randomUUID();
 
     // Generate questions for the battle (using legacy method for now)
     const questions = await this.questionService.generateBattleQuestionsLegacy();

@@ -1,6 +1,5 @@
 import { EloService } from './EloService';
 import { User } from '../types';
-import { v4 as uuidv4 } from 'uuid';
 
 // Mock in-memory storage for testing without Firebase
 const mockUsers = new Map<string, User>();

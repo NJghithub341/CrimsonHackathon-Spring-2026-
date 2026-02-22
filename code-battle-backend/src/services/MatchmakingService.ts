@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { MatchmakingRequest, ProgrammingLanguage } from '../types';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 
 export interface Match {
   id: string;
@@ -48,7 +48,7 @@ export class MatchmakingService extends EventEmitter {
     // Ensure request has required fields
     const enhancedRequest: MatchmakingRequest = {
       ...request,
-      id: request.id || uuidv4(),
+      id: request.id || randomUUID(),
       timestamp: new Date(),
     };
 
@@ -246,7 +246,7 @@ export class MatchmakingService extends EventEmitter {
     }
 
     const match: Match = {
-      id: uuidv4(),
+      id: randomUUID(),
       player1,
       player2,
       language: selectedLanguage,

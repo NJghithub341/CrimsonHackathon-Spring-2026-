@@ -1,7 +1,6 @@
 import FirebaseService from './FirebaseService';
 import { EloService } from './EloService';
 import { User, ProgrammingLanguage, LearningTrack } from '../types';
-import { v4 as uuidv4 } from 'uuid';
 
 export class UserService {
   private eloService = new EloService();

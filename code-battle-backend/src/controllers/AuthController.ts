@@ -6,7 +6,7 @@ import { MockUserService } from '../services/MockUserService';
 import { generateJWT } from '../middleware/auth';
 import { AppError } from '../middleware/errorHandler';
 import { AuthRequest } from '../types';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 
 export class AuthController {
   private userService = new UserService();
@@ -26,7 +26,7 @@ export class AuthController {
       }
 
       let user;
-      const userId = uuidv4();
+      const userId = randomUUID();
 
       if (FirebaseService.isInitialized()) {
         // Use Firebase when available
