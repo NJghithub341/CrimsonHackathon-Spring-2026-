@@ -127,7 +127,14 @@ export class QuestionController {
         });
       }
 
-      const result = questionService.validateAnswer(id as string, answer);
+      if (typeof id !== 'string') {
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid question ID'
+        });
+      }
+
+      const result = questionService.validateAnswer(id, answer);
 
       res.json({
         success: true,

@@ -9,6 +9,7 @@ import dotenv from 'dotenv';
 import { authRoutes } from './routes/auth';
 import { userRoutes } from './routes/users';
 import { battleRoutes } from './routes/battles';
+import { battleResultsRoutes } from './routes/battleResults';
 import { matchmakingRoutes } from './routes/matchmaking';
 import { questionRoutes } from './routes/questions';
 import { audioRoutes } from './routes/audio';
@@ -52,6 +53,7 @@ app.get('/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/battles', battleRoutes);
+app.use('/api/battle-results', battleResultsRoutes);
 app.use('/api/matchmaking', matchmakingRoutes);
 app.use('/api/questions', questionRoutes);
 app.use('/api/audio', audioRoutes);

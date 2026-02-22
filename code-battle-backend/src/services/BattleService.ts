@@ -1,12 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Battle, Question } from '../types';
 import { QuestionService } from './QuestionService';
-import { EloService } from './EloService';
+import { EloService, BattlePerformance, BattleResult as EloBattleResult } from './EloService';
 
-interface BattleResult {
+interface BattleSubmissionResult {
   battleFinished: boolean;
   nextQuestion?: Question;
-  battleResults?: any;
+  battleResults?: EloBattleResult;
 }
 
 export class BattleService {
@@ -50,7 +50,7 @@ export class BattleService {
     questionIndex: number,
     answer: number,
     timeTaken: number
-  ): Promise<BattleResult> {
+  ): Promise<BattleSubmissionResult> {
     const battle = this.battles.get(battleId);
     if (!battle) {
       throw new Error('Battle not found');
@@ -92,63 +92,73 @@ export class BattleService {
     return { battleFinished: false };
   }
 
-  private calculateBattleResults(battle: Battle) {
-    const results: any = {
-      battleId: battle.id,
-      players: {},
-      winner: null,
-      eloChanges: {}
-    };
+  private calculateBattleResults(battle: Battle): EloBattleResult {
+    const [player1Id, player2Id] = battle.players;
 
-    // Calculate scores for each player
-    battle.players.forEach(playerId => {
-      let correctAnswers = 0;
-      let totalTime = 0;
-      let points = 0;
+    // Calculate performance for each player
+    const player1Performance = this.calculatePlayerPerformance(battle, player1Id);
+    const player2Performance = this.calculatePlayerPerformance(battle, player2Id);
 
-      battle.questions.forEach((question, index) => {
-        const playerAnswer = battle.playerAnswers[playerId].answers[index];
-        const timeTaken = battle.playerAnswers[playerId].timeTaken[index];
+    // Calculate battle duration
+    const battleDuration = battle.endTime && battle.startTime
+      ? (battle.endTime.getTime() - battle.startTime.getTime()) / 1000
+      : 0;
 
-        if (playerAnswer === question.correctAnswer) {
-          correctAnswers++;
-          // Award points based on speed (faster = more points)
-          const speedBonus = Math.max(0, question.timeLimit - timeTaken) / question.timeLimit;
-          points += question.points * (1 + speedBonus);
-        }
+    // Mock player ELOs (in a real implementation, these would come from user service)
+    const player1Elo = 1200; // Would be fetched from user data
+    const player2Elo = 1200; // Would be fetched from user data
 
-        totalTime += timeTaken;
-      });
+    // Use ELO service to calculate comprehensive battle results
+    const results = this.eloService.calculateBattleResult(
+      player1Id,
+      player2Id,
+      player1Elo,
+      player2Elo,
+      player1Performance,
+      player2Performance,
+      battleDuration,
+      'ranked'
+    );
 
-      results.players[playerId] = {
-        correctAnswers,
-        totalTime,
-        points: Math.round(points)
-      };
-    });
-
-    // Determine winner
-    const [player1, player2] = battle.players;
-    const player1Score = results.players[player1];
-    const player2Score = results.players[player2];
-
-    if (player1Score.points > player2Score.points) {
-      results.winner = player1;
-    } else if (player2Score.points > player1Score.points) {
-      results.winner = player2;
-    } else {
-      // Tie - winner is determined by total time (faster wins)
-      results.winner = player1Score.totalTime < player2Score.totalTime ? player1 : player2;
-    }
-
-    // Calculate ELO changes (placeholder - would integrate with user service)
-    const eloChange = 15; // Simplified ELO change
-    results.eloChanges[results.winner] = eloChange;
-    results.eloChanges[results.winner === player1 ? player2 : player1] = -eloChange;
-
+    // Update battle object with ELO changes
     battle.eloChanges = results.eloChanges;
+    battle.winner = results.winner === 'player1' ? player1Id :
+                   results.winner === 'player2' ? player2Id : undefined;
 
     return results;
+  }
+
+  private calculatePlayerPerformance(battle: Battle, playerId: string): BattlePerformance {
+    let correctAnswers = 0;
+    let totalTime = 0;
+    let points = 0;
+
+    battle.questions.forEach((question, index) => {
+      const playerAnswer = battle.playerAnswers[playerId].answers[index];
+      const timeTaken = battle.playerAnswers[playerId].timeTaken[index];
+
+      totalTime += timeTaken;
+
+      if (playerAnswer === question.correctAnswer) {
+        correctAnswers++;
+        // Award points based on speed (faster = more points)
+        const speedBonus = Math.max(0, (question.timeLimit - timeTaken) / question.timeLimit);
+        points += Math.round(question.points * (1 + speedBonus * 0.5)); // 50% speed bonus cap
+      }
+    });
+
+    const totalQuestions = battle.questions.length;
+    const accuracy = totalQuestions > 0 ? correctAnswers / totalQuestions : 0;
+    const averageTime = totalQuestions > 0 ? totalTime / totalQuestions : 0;
+
+    return {
+      correctAnswers,
+      totalQuestions,
+      totalTime,
+      points,
+      averageTime,
+      accuracy
+    };
   }
 
   getBattle(battleId: string): Battle | undefined {
