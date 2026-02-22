@@ -26,7 +26,7 @@ export const UserStats: React.FC<UserStatsProps> = ({ stats }) => {
   const StatCard: React.FC<{
     icon: React.ReactNode;
     label: string;
-    value: string | number;
+    value: string | number | React.ReactNode;
     color: string;
     subtitle?: string;
   }> = ({ icon, label, value, color, subtitle }) => (

@@ -2,45 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-gray-50 text-gray-900;
-    font-feature-settings: "rlig" 1, "calt" 1;
-    margin: 0;
-    min-height: 100vh;
-  }
+/* Basic styles without complex @apply directives */
+body {
+  font-feature-settings: "rlig" 1, "calt" 1;
+  margin: 0;
+  min-height: 100vh;
 }
 
-@layer components {
-  .btn-primary {
-    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
-  }
+/* Custom component styles using regular CSS */
+.btn-primary {
+  background-color: #2563eb;
+  color: white;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease;
+}
 
-  .btn-secondary {
-    @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
-  }
+.btn-primary:hover {
+  background-color: #1d4ed8;
+}
 
-  .btn-success {
-    @apply bg-success-500 hover:bg-success-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
-  }
+.btn-secondary {
+  background-color: #e5e7eb;
+  color: #374151;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease;
+}
 
-  .btn-danger {
-    @apply bg-danger-500 hover:bg-danger-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
-  }
+.btn-secondary:hover {
+  background-color: #d1d5db;
+}
 
-  .card {
-    @apply bg-white rounded-lg shadow-md border border-gray-200 p-6;
-  }
-
-  .input {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
-  }
-
-  .elo-badge {
-    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
-  }
+.card {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  padding: 1.5rem;
 }

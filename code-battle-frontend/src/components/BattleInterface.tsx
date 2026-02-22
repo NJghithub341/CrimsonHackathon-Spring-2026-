@@ -494,7 +494,7 @@ export const BattleInterface: React.FC<BattleInterfaceProps> = ({
       </div>
 
       {/* Pixel art styles */}
-      <style jsx>{`
+      <style>{`
         .pixel-font {
           font-family: 'Courier New', monospace;
           font-weight: bold;

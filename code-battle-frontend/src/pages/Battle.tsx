@@ -44,7 +44,7 @@ export const Battle: React.FC = () => {
           <div className="text-2xl text-white pixel-font">LOADING BATTLE...</div>
           <div className="text-sm text-gray-400 pixel-font mt-2">Preparing weapons of code destruction</div>
         </div>
-        <style jsx>{`
+        <style>{`
           .pixel-font {
             font-family: 'Courier New', monospace;
             font-weight: bold;
@@ -69,7 +69,7 @@ export const Battle: React.FC = () => {
             RETURN TO MATCHMAKING
           </button>
         </div>
-        <style jsx>{`
+        <style>{`
           .pixel-font {
             font-family: 'Courier New', monospace;
             font-weight: bold;
