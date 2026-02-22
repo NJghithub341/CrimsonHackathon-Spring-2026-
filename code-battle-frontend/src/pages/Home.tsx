@@ -1,312 +1,315 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { useSpring, animated, config } from '@react-spring/web';
 import { useAuth } from '../context/AuthContext';
 import { Code, Zap, Trophy, Users } from 'lucide-react';
+
+const sans = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+
+const features = [
+  {
+    icon: <Code size={20} />,
+    title: 'Interactive Learning',
+    description: 'Structured lessons in Python, Java, and C++ with hands-on exercises at every step.',
+  },
+  {
+    icon: <Zap size={20} />,
+    title: 'Real-Time Battles',
+    description: 'Compete in timed 1v1 coding challenges against opponents matched to your skill level.',
+  },
+  {
+    icon: <Trophy size={20} />,
+    title: 'ELO Ranking',
+    description: 'A chess-inspired rating system that accurately reflects your skill and tracks your growth.',
+  },
+  {
+    icon: <Users size={20} />,
+    title: 'Smart Matchmaking',
+    description: 'Fair pairing ensures every match is competitive — no stomps, no walkovers.',
+  },
+];
+
+const steps = [
+  {
+    number: '01',
+    title: 'Sign Up & Assess',
+    description: 'Create an account and complete a short skill assessment to set your starting ELO.',
+  },
+  {
+    number: '02',
+    title: 'Learn & Practice',
+    description: 'Work through language-specific modules and strengthen weak areas before you battle.',
+  },
+  {
+    number: '03',
+    title: 'Battle & Rank Up',
+    description: 'Enter matchmaking, win rounds, and climb the global leaderboard.',
+  },
+];
 
 export const Home: React.FC = () => {
   const { currentUser } = useAuth();
 
-  // Hero title animation
-  const titleSpring = useSpring({
-    from: { opacity: 0, transform: 'translateY(-50px) scale(0.9)' },
-    to: { opacity: 1, transform: 'translateY(0px) scale(1)' },
-    config: config.gentle,
-    delay: 200
-  });
-
-  // Subtitle animation
-  const subtitleSpring = useSpring({
-    from: { opacity: 0, transform: 'translateY(30px)' },
-    to: { opacity: 1, transform: 'translateY(0px)' },
-    config: config.gentle,
-    delay: 600
-  });
-
-  // Container animations
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        delayChildren: 0.2,
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: {
-      opacity: 0,
-      y: 30,
-      scale: 0.9
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 10
-      }
-    }
-  };
-
   return (
-    <motion.div
-      className="max-w-6xl mx-auto p-6"
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-    >
-      <div className="hero-section text-center py-20">
-        <animated.h1
-          className="text-orbitron-xl mb-8"
-          style={{
-            fontSize: '3.5rem',
-            color: 'var(--pixel-primary)',
-            lineHeight: 1.2,
-            ...titleSpring
-          }}
-        >
-          <motion.span
-            animate={{
-              textShadow: [
-                '0 0 20px var(--pixel-primary)',
-                '0 0 40px var(--pixel-primary)',
-                '0 0 20px var(--pixel-primary)'
-              ]
-            }}
-            transition={{ repeat: Infinity, duration: 2 }}
-          >
-            ⚔️ MASTER PROGRAMMING
-          </motion.span>
-          <br />
-          <span>THROUGH </span>
-          <motion.span
-            style={{ color: 'var(--pixel-warning)' }}
-            animate={{
-              scale: [1, 1.05, 1],
-              textShadow: [
-                '0 0 20px var(--pixel-warning)',
-                '0 0 40px var(--pixel-warning)',
-                '0 0 20px var(--pixel-warning)'
-              ]
-            }}
-            transition={{ repeat: Infinity, duration: 1.5, delay: 0.5 }}
-          >
-            EPIC BATTLES
-          </motion.span>
-          <span> ⚔️</span>
-        </animated.h1>
+    <div style={{ fontFamily: sans, color: 'rgba(255,255,255,0.9)' }}>
 
-        <animated.p
-          className="text-minecraft-lg mb-12 max-w-4xl mx-auto"
-          style={{
-            color: 'var(--pixel-light)',
-            ...subtitleSpring
-          }}
-        >
-          🎮 Learn programming concepts through interactive lessons and test your skills<br />
-          in real-time 1v1 coding battles. Climb the ranks and become a programming champion! 🏆
-        </animated.p>
+      {/* ── Hero ── */}
+      <section style={{
+        minHeight: '76vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
+        padding: '80px 24px 64px',
+        maxWidth: '760px',
+        margin: '0 auto',
+      }}>
+        <p style={{
+          fontSize: '11px',
+          fontWeight: '600',
+          letterSpacing: '1.6px',
+          textTransform: 'uppercase',
+          color: 'rgba(255,255,255,0.38)',
+          marginBottom: '28px',
+        }}>
+          Competitive Coding Platform
+        </p>
 
-        <motion.div
-          className="space-x-6"
-          variants={itemVariants}
-        >
+        <h1 style={{
+          fontSize: 'clamp(2.4rem, 6vw, 4rem)',
+          fontWeight: '700',
+          lineHeight: '1.12',
+          letterSpacing: '-0.03em',
+          color: '#ffffff',
+          margin: '0 0 24px',
+        }}>
+          Master programming<br />through competition.
+        </h1>
+
+        <p style={{
+          fontSize: 'clamp(1rem, 2.5vw, 1.2rem)',
+          lineHeight: '1.65',
+          color: 'rgba(255,255,255,0.52)',
+          maxWidth: '520px',
+          margin: '0 0 44px',
+        }}>
+          Build real skills, earn your rank, and battle opponents matched to your exact level.
+        </p>
+
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
           {currentUser ? (
             <>
-              <motion.div
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Link to="/dashboard" className="btn-pixel btn-primary text-minecraft font-bold">
-                  🎯 GO TO DASHBOARD
-                </Link>
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Link to="/matchmaking" className="btn-pixel btn-secondary text-minecraft font-bold">
-                  ⚔️ FIND BATTLE
-                </Link>
-              </motion.div>
+              <Link to="/dashboard" style={primaryBtnStyle}>Go to Dashboard</Link>
+              <Link to="/matchmaking" style={secondaryBtnStyle}>Find a Battle</Link>
             </>
           ) : (
             <>
-              <motion.div
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Link to="/register" className="btn-pixel btn-primary text-minecraft font-bold">
-                  🚀 START LEARNING
-                </Link>
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Link to="/login" className="btn-pixel btn-secondary text-minecraft font-bold">
-                  👤 SIGN IN
-                </Link>
-              </motion.div>
+              <Link to="/register" style={primaryBtnStyle}>Get Started</Link>
+              <Link to="/login" style={secondaryBtnStyle}>Sign In</Link>
             </>
           )}
-        </motion.div>
-      </div>
+        </div>
+      </section>
 
-      <motion.div className="grid-pixel py-16" variants={containerVariants}>
-        {[
-          {
-            icon: <Code className="w-10 h-10" />,
-            title: "💻 INTERACTIVE LEARNING",
-            description: "Learn Python, Java, and C++ through hands-on exercises and challenges",
-            color: 'var(--pixel-primary)',
-            bgClass: 'bg-pixel-primary'
-          },
-          {
-            icon: <Zap className="w-10 h-10" />,
-            title: "⚡ REAL-TIME BATTLES",
-            description: "Face off against opponents in fast-paced 30-second coding challenges",
-            color: 'var(--pixel-success)',
-            bgClass: 'bg-pixel-success'
-          },
-          {
-            icon: <Trophy className="w-10 h-10" />,
-            title: "🏆 ELO RANKING",
-            description: "Climb the leaderboard with our chess-inspired ranking system",
-            color: 'var(--pixel-warning)',
-            bgClass: 'bg-pixel-warning'
-          },
-          {
-            icon: <Users className="w-10 h-10" />,
-            title: "🎯 SMART MATCHMAKING",
-            description: "Get matched with opponents of similar skill level for fair competition",
-            color: 'var(--pixel-secondary)',
-            bgClass: 'bg-pixel-secondary'
-          }
-        ].map((feature, index) => (
-          <motion.div
-            key={index}
-            className="card card-glow text-center"
-            variants={itemVariants}
-            whileHover={{
-              y: -10,
-              scale: 1.05,
-              transition: { type: "spring", stiffness: 300, damping: 10 }
-            }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <motion.div
-              className={`stat-icon ${feature.bgClass} mb-4 mx-auto`}
-              style={{ color: feature.color }}
-              whileHover={{
-                rotate: [0, -10, 10, 0],
-                scale: 1.1
-              }}
-              transition={{ duration: 0.3 }}
-            >
-              {feature.icon}
-            </motion.div>
-            <motion.h3
-              className="text-minecraft-lg mb-4"
-              style={{ color: feature.color }}
-              whileHover={{ scale: 1.05 }}
-            >
-              {feature.title}
-            </motion.h3>
-            <p className="text-minecraft-sm" style={{ color: 'var(--pixel-light)' }}>
-              {feature.description}
-            </p>
-          </motion.div>
-        ))}
-      </motion.div>
+      {/* ── Divider ── */}
+      <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', maxWidth: '1100px', margin: '0 auto' }} />
 
-      <motion.div
-        className="card battle-panel py-16"
-        variants={itemVariants}
-      >
-        <motion.h2
-          className="text-orbitron-xl text-center mb-16"
-          style={{
-            fontSize: '2.5rem',
-            color: 'var(--pixel-accent)'
-          }}
-          animate={{
-            textShadow: [
-              '0 0 20px var(--pixel-accent)',
-              '0 0 40px var(--pixel-accent)',
-              '0 0 20px var(--pixel-accent)'
-            ]
-          }}
-          transition={{ repeat: Infinity, duration: 3 }}
-        >
-          🎯 HOW IT WORKS
-        </motion.h2>
-        <motion.div
-          className="grid md:grid-cols-3 gap-8 text-center"
-          variants={containerVariants}
-        >
-          {[
-            {
-              number: "1",
-              title: "📝 SIGN UP & ASSESS",
-              description: "Create your account and take our skill assessment to determine your starting ELO",
-              color: 'var(--pixel-primary)',
-              bgClass: 'bg-pixel-primary'
-            },
-            {
-              number: "2",
-              title: "📚 LEARN & PRACTICE",
-              description: "Study programming concepts through our Duolingo-style learning modules",
-              color: 'var(--pixel-success)',
-              bgClass: 'bg-pixel-success'
-            },
-            {
-              number: "3",
-              title: "⚔️ BATTLE & RANK UP",
-              description: "Enter matchmaking to battle other players and climb the global leaderboard",
-              color: 'var(--pixel-warning)',
-              bgClass: 'bg-pixel-warning'
-            }
-          ].map((step, index) => (
-            <motion.div
-              key={index}
-              variants={itemVariants}
-              whileHover={{
-                y: -10,
-                transition: { type: "spring", stiffness: 300 }
-              }}
-            >
-              <motion.div
-                className={`w-16 h-16 ${step.bgClass} border-pixel mx-auto mb-6 flex items-center justify-center`}
-                whileHover={{
-                  scale: 1.1,
-                  rotate: [0, -5, 5, 0],
-                  boxShadow: `0 0 30px ${step.color}`
-                }}
-                transition={{ duration: 0.3 }}
-              >
-                <span className="text-minecraft-lg font-bold text-black">{step.number}</span>
-              </motion.div>
-              <motion.h3
-                className="text-minecraft-lg mb-4"
-                style={{ color: step.color }}
-                whileHover={{ scale: 1.05 }}
-              >
-                {step.title}
-              </motion.h3>
-              <p className="text-minecraft-sm" style={{ color: 'var(--pixel-light)' }}>
-                {step.description}
+      {/* ── Features ── */}
+      <section style={{ maxWidth: '1100px', margin: '0 auto', padding: '80px 24px' }}>
+        <h2 style={{
+          fontSize: 'clamp(1.4rem, 3vw, 1.9rem)',
+          fontWeight: '600',
+          letterSpacing: '-0.02em',
+          color: '#ffffff',
+          marginBottom: '8px',
+          textAlign: 'center',
+        }}>
+          Everything you need to level up.
+        </h2>
+        <p style={{
+          textAlign: 'center',
+          color: 'rgba(255,255,255,0.45)',
+          fontSize: '15px',
+          marginBottom: '52px',
+        }}>
+          One platform for learning, practice, and competition.
+        </p>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
+          gap: '16px',
+        }}>
+          {features.map((f) => (
+            <div key={f.title} style={featureCardStyle}>
+              <div style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '8px',
+                background: 'rgba(255,255,255,0.08)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'rgba(255,255,255,0.75)',
+                marginBottom: '16px',
+              }}>
+                {f.icon}
+              </div>
+              <h3 style={{
+                fontSize: '15px',
+                fontWeight: '600',
+                color: '#ffffff',
+                marginBottom: '8px',
+              }}>
+                {f.title}
+              </h3>
+              <p style={{
+                fontSize: '13.5px',
+                lineHeight: '1.65',
+                color: 'rgba(255,255,255,0.45)',
+                margin: 0,
+              }}>
+                {f.description}
               </p>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
-      </motion.div>
-    </motion.div>
+        </div>
+      </section>
+
+      {/* ── Divider ── */}
+      <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', maxWidth: '1100px', margin: '0 auto' }} />
+
+      {/* ── How It Works ── */}
+      <section style={{ maxWidth: '1100px', margin: '0 auto', padding: '80px 24px' }}>
+        <h2 style={{
+          fontSize: 'clamp(1.4rem, 3vw, 1.9rem)',
+          fontWeight: '600',
+          letterSpacing: '-0.02em',
+          color: '#ffffff',
+          marginBottom: '8px',
+          textAlign: 'center',
+        }}>
+          How it works.
+        </h2>
+        <p style={{
+          textAlign: 'center',
+          color: 'rgba(255,255,255,0.45)',
+          fontSize: '15px',
+          marginBottom: '52px',
+        }}>
+          From zero to ranked in three steps.
+        </p>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+          gap: '0',
+        }}>
+          {steps.map((s, i) => (
+            <div key={s.number} style={{
+              padding: '32px',
+              borderTop: '1px solid rgba(255,255,255,0.08)',
+              borderLeft: i > 0 ? '1px solid rgba(255,255,255,0.08)' : undefined,
+            }}>
+              <p style={{
+                fontSize: '11px',
+                fontWeight: '700',
+                letterSpacing: '1.4px',
+                color: 'rgba(255,255,255,0.25)',
+                marginBottom: '20px',
+              }}>
+                {s.number}
+              </p>
+              <h3 style={{
+                fontSize: '17px',
+                fontWeight: '600',
+                color: '#ffffff',
+                marginBottom: '10px',
+              }}>
+                {s.title}
+              </h3>
+              <p style={{
+                fontSize: '13.5px',
+                lineHeight: '1.65',
+                color: 'rgba(255,255,255,0.45)',
+                margin: 0,
+              }}>
+                {s.description}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Divider ── */}
+      <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', maxWidth: '1100px', margin: '0 auto' }} />
+
+      {/* ── Bottom CTA ── */}
+      <section style={{
+        textAlign: 'center',
+        padding: '80px 24px 96px',
+        maxWidth: '600px',
+        margin: '0 auto',
+      }}>
+        <h2 style={{
+          fontSize: 'clamp(1.6rem, 4vw, 2.4rem)',
+          fontWeight: '700',
+          letterSpacing: '-0.025em',
+          color: '#ffffff',
+          marginBottom: '16px',
+        }}>
+          Start competing today.
+        </h2>
+        <p style={{
+          fontSize: '15px',
+          color: 'rgba(255,255,255,0.45)',
+          marginBottom: '36px',
+          lineHeight: '1.65',
+        }}>
+          Join developers who are sharpening their skills through real competition.
+        </p>
+        {currentUser ? (
+          <Link to="/matchmaking" style={primaryBtnStyle}>Find a Battle</Link>
+        ) : (
+          <Link to="/register" style={primaryBtnStyle}>Create Free Account</Link>
+        )}
+      </section>
+
+    </div>
   );
+};
+
+const primaryBtnStyle: React.CSSProperties = {
+  display: 'inline-block',
+  padding: '12px 26px',
+  borderRadius: '8px',
+  background: '#ffffff',
+  color: '#0f0f23',
+  fontSize: '14px',
+  fontWeight: '600',
+  fontFamily: sans,
+  textDecoration: 'none',
+  letterSpacing: '-0.01em',
+  transition: 'opacity 0.15s ease',
+};
+
+const secondaryBtnStyle: React.CSSProperties = {
+  display: 'inline-block',
+  padding: '12px 26px',
+  borderRadius: '8px',
+  background: 'transparent',
+  border: '1px solid rgba(255,255,255,0.2)',
+  color: 'rgba(255,255,255,0.8)',
+  fontSize: '14px',
+  fontWeight: '500',
+  fontFamily: sans,
+  textDecoration: 'none',
+  letterSpacing: '-0.01em',
+};
+
+const featureCardStyle: React.CSSProperties = {
+  background: 'rgba(255,255,255,0.03)',
+  border: '1px solid rgba(255,255,255,0.08)',
+  borderRadius: '12px',
+  padding: '28px',
 };
