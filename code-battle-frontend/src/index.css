@@ -221,9 +221,32 @@ body {
 }
 
 /* Keep original pixel classes for backwards compatibility */
-.text-pixel-xl { @apply text-minecraft-xl; }
-.text-pixel-lg { @apply text-minecraft-lg; }
-.text-pixel { @apply text-minecraft; }
+.text-pixel-xl {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 2rem;
+  font-weight: 400;
+  text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.8), 2px 2px 0px rgba(255, 255, 255, 0.1);
+  line-height: 1.2;
+  letter-spacing: 2px;
+}
+
+.text-pixel-lg {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1.5rem;
+  font-weight: 400;
+  text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.8), 1px 1px 0px rgba(255, 255, 255, 0.1);
+  line-height: 1.3;
+  letter-spacing: 1px;
+}
+
+.text-pixel {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1rem;
+  font-weight: 400;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.8);
+  line-height: 1.4;
+  letter-spacing: 0.5px;
+}
 
 /* Animated Gradient Backgrounds */
 .bg-pixel-primary {
