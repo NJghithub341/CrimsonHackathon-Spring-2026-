@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Search, Users, Clock, Trophy, Zap, X, Check, AlertCircle, Loader } from 'lucide-react';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+
 interface QueueStats {
   totalPlayers: number;
   averageElo: number;
@@ -94,7 +96,7 @@ export const MatchmakingQueue: React.FC<MatchmakingQueueProps> = ({ onMatchReady
     setError(null);
 
     try {
-      const response = await fetch('/api/matchmaking/queue/join', {
+      const response = await fetch(`${API_BASE_URL}/matchmaking/queue/join`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -128,7 +130,7 @@ export const MatchmakingQueue: React.FC<MatchmakingQueueProps> = ({ onMatchReady
     setLoading(true);
 
     try {
-      const response = await fetch('/api/matchmaking/queue/leave', {
+      const response = await fetch(`${API_BASE_URL}/matchmaking/queue/leave`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -153,7 +155,7 @@ export const MatchmakingQueue: React.FC<MatchmakingQueueProps> = ({ onMatchReady
 
   const checkQueueStatus = async () => {
     try {
-      const response = await fetch('/api/matchmaking/queue/status', {
+      const response = await fetch(`${API_BASE_URL}/matchmaking/queue/status`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
@@ -184,7 +186,7 @@ export const MatchmakingQueue: React.FC<MatchmakingQueueProps> = ({ onMatchReady
     setLoading(true);
 
     try {
-      const response = await fetch(`/api/matchmaking/matches/${currentMatch.id}/accept`, {
+      const response = await fetch(`${API_BASE_URL}/matchmaking/matches/${currentMatch.id}/accept`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -215,7 +217,7 @@ export const MatchmakingQueue: React.FC<MatchmakingQueueProps> = ({ onMatchReady
     setLoading(true);
 
     try {
-      const response = await fetch(`/api/matchmaking/matches/${currentMatch.id}/decline`, {
+      const response = await fetch(`${API_BASE_URL}/matchmaking/matches/${currentMatch.id}/decline`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,

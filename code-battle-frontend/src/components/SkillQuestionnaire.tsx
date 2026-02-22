@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ProgrammingLanguage, LearningTrack } from '../types';
-import { ChevronLeft, ChevronRight, Code, BookOpen, Zap, Trophy } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface QuestionnaireData {
   experienceLevel: LearningTrack;
@@ -19,6 +19,44 @@ interface SkillQuestionnaireProps {
   onComplete: (data: QuestionnaireData) => void;
   onBack: () => void;
 }
+
+const sansFont = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+
+const stepTitle: React.CSSProperties = {
+  fontFamily: sansFont,
+  fontSize: '20px',
+  fontWeight: '700',
+  color: 'white',
+  margin: '0 0 8px',
+  letterSpacing: '-0.3px',
+};
+
+const stepSubtitle: React.CSSProperties = {
+  fontFamily: sansFont,
+  fontSize: '14px',
+  color: 'rgba(255,255,255,0.5)',
+  margin: '0 0 28px',
+};
+
+const fieldLabel: React.CSSProperties = {
+  fontFamily: sansFont,
+  fontSize: '12px',
+  fontWeight: '600',
+  color: 'rgba(255,255,255,0.55)',
+  textTransform: 'uppercase',
+  letterSpacing: '0.5px',
+  marginBottom: '12px',
+  display: 'block',
+};
+
+const sliderValue: React.CSSProperties = {
+  fontFamily: sansFont,
+  fontSize: '13px',
+  fontWeight: '600',
+  color: 'var(--pixel-primary)',
+  textAlign: 'center',
+  marginTop: '8px',
+};
 
 export const SkillQuestionnaire: React.FC<SkillQuestionnaireProps> = ({ onComplete, onBack }) => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -42,28 +80,20 @@ export const SkillQuestionnaire: React.FC<SkillQuestionnaireProps> = ({ onComple
   };
 
   const handleLanguageToggle = (language: ProgrammingLanguage) => {
-    const currentLanguages = formData.preferredLanguages;
-    if (currentLanguages.includes(language)) {
-      updateFormData({
-        preferredLanguages: currentLanguages.filter(l => l !== language)
-      });
+    const current = formData.preferredLanguages;
+    if (current.includes(language)) {
+      updateFormData({ preferredLanguages: current.filter(l => l !== language) });
     } else {
-      updateFormData({
-        preferredLanguages: [...currentLanguages, language]
-      });
+      updateFormData({ preferredLanguages: [...current, language] });
     }
   };
 
   const handleTopicToggle = (topic: string) => {
-    const currentTopics = formData.favoriteTopics;
-    if (currentTopics.includes(topic)) {
-      updateFormData({
-        favoriteTopics: currentTopics.filter(t => t !== topic)
-      });
+    const current = formData.favoriteTopics;
+    if (current.includes(topic)) {
+      updateFormData({ favoriteTopics: current.filter(t => t !== topic) });
     } else {
-      updateFormData({
-        favoriteTopics: [...currentTopics, topic]
-      });
+      updateFormData({ favoriteTopics: [...current, topic] });
     }
   };
 
@@ -84,49 +114,46 @@ export const SkillQuestionnaire: React.FC<SkillQuestionnaireProps> = ({ onComple
   };
 
   const isStepValid = () => {
-    switch (currentStep) {
-      case 1: // Languages
-        return formData.preferredLanguages.length > 0;
-      default:
-        return true;
-    }
+    if (currentStep === 1) return formData.preferredLanguages.length > 0;
+    return true;
   };
 
   const renderStep = () => {
     switch (currentStep) {
       case 0:
         return (
-          <div className="space-y-6">
-            <div className="text-center">
-              <BookOpen className="w-16 h-16 text-primary-600 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">What's your programming experience level?</h2>
-              <p className="text-gray-600">This helps us estimate your starting ELO rating</p>
-            </div>
+          <div>
+            <h2 style={stepTitle}>What's your experience level?</h2>
+            <p style={stepSubtitle}>This helps us estimate your starting ELO rating</p>
 
-            <div className="space-y-3">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {[
-                { value: 'beginner', label: 'Beginner', desc: 'Just starting out or learning basics' },
-                { value: 'intermediate', label: 'Intermediate', desc: 'Comfortable with fundamentals and some projects' },
-                { value: 'advanced', label: 'Advanced', desc: 'Experienced with complex projects and patterns' },
+                { value: 'beginner', label: 'Beginner', emoji: '🌱', desc: 'Just starting out or learning the basics' },
+                { value: 'intermediate', label: 'Intermediate', emoji: '⚡', desc: 'Comfortable with fundamentals and some projects' },
+                { value: 'advanced', label: 'Advanced', emoji: '🔥', desc: 'Experienced with complex systems and patterns' },
               ].map((level) => (
-                <label key={level.value} className="block">
-                  <input
-                    type="radio"
-                    name="experienceLevel"
-                    value={level.value}
-                    checked={formData.experienceLevel === level.value}
-                    onChange={(e) => updateFormData({ experienceLevel: e.target.value as LearningTrack })}
-                    className="sr-only"
-                  />
-                  <div className={`p-4 border-2 rounded-lg cursor-pointer transition-colors ${
-                    formData.experienceLevel === level.value
-                      ? 'border-primary-600 bg-primary-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}>
-                    <div className="font-medium text-gray-900">{level.label}</div>
-                    <div className="text-sm text-gray-600">{level.desc}</div>
+                <div
+                  key={level.value}
+                  onClick={() => updateFormData({ experienceLevel: level.value as LearningTrack })}
+                  className={`bubble-option-card ${formData.experienceLevel === level.value ? 'selected' : ''}`}
+                  style={{ textAlign: 'left', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer' }}
+                >
+                  <span style={{ fontSize: '24px', flexShrink: 0 }}>{level.emoji}</span>
+                  <div>
+                    <div style={{
+                      fontFamily: sansFont,
+                      fontSize: '15px',
+                      fontWeight: '600',
+                      color: formData.experienceLevel === level.value ? '#00ff88' : 'white',
+                      marginBottom: '2px',
+                    }}>{level.label}</div>
+                    <div style={{
+                      fontFamily: sansFont,
+                      fontSize: '12px',
+                      color: 'rgba(255,255,255,0.5)',
+                    }}>{level.desc}</div>
                   </div>
-                </label>
+                </div>
               ))}
             </div>
           </div>
@@ -134,97 +161,94 @@ export const SkillQuestionnaire: React.FC<SkillQuestionnaireProps> = ({ onComple
 
       case 1:
         return (
-          <div className="space-y-6">
-            <div className="text-center">
-              <Code className="w-16 h-16 text-primary-600 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Which programming languages do you know?</h2>
-              <p className="text-gray-600">Select all that apply (choose at least one)</p>
-            </div>
+          <div>
+            <h2 style={stepTitle}>Which languages do you know?</h2>
+            <p style={stepSubtitle}>Select all that apply — choose at least one</p>
 
-            <div className="grid md:grid-cols-3 gap-4">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
               {[
-                { value: 'python', label: 'Python', color: 'bg-green-100 border-green-200' },
-                { value: 'java', label: 'Java', color: 'bg-red-100 border-red-200' },
-                { value: 'cpp', label: 'C++', color: 'bg-blue-100 border-blue-200' },
-              ].map((lang) => (
-                <label key={lang.value} className="block">
-                  <input
-                    type="checkbox"
-                    checked={formData.preferredLanguages.includes(lang.value as ProgrammingLanguage)}
-                    onChange={() => handleLanguageToggle(lang.value as ProgrammingLanguage)}
-                    className="sr-only"
-                  />
-                  <div className={`p-6 border-2 rounded-lg cursor-pointer transition-colors text-center ${
-                    formData.preferredLanguages.includes(lang.value as ProgrammingLanguage)
-                      ? `${lang.color} border-opacity-100`
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}>
-                    <div className="font-medium text-gray-900 text-lg">{lang.label}</div>
+                { value: 'python', label: 'Python', emoji: '🐍' },
+                { value: 'java', label: 'Java', emoji: '☕' },
+                { value: 'cpp', label: 'C++', emoji: '⚡' },
+              ].map((lang) => {
+                const selected = formData.preferredLanguages.includes(lang.value as ProgrammingLanguage);
+                return (
+                  <div
+                    key={lang.value}
+                    onClick={() => handleLanguageToggle(lang.value as ProgrammingLanguage)}
+                    className={`bubble-option-card ${selected ? 'selected' : ''}`}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <div style={{ fontSize: '32px', marginBottom: '8px' }}>{lang.emoji}</div>
+                    <div style={{
+                      fontFamily: sansFont,
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: selected ? '#00ff88' : 'white',
+                    }}>{lang.label}</div>
                   </div>
-                </label>
-              ))}
+                );
+              })}
             </div>
           </div>
         );
 
       case 2:
         return (
-          <div className="space-y-6">
-            <div className="text-center">
-              <Zap className="w-16 h-16 text-primary-600 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Experience Details</h2>
-              <p className="text-gray-600">Tell us about your programming journey</p>
-            </div>
+          <div>
+            <h2 style={stepTitle}>Experience Details</h2>
+            <p style={stepSubtitle}>Tell us about your programming journey</p>
 
-            <div className="space-y-6">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Years of programming experience
-                </label>
+                <label style={fieldLabel}>Years of experience</label>
                 <input
                   type="range"
                   min="0"
                   max="20"
                   value={formData.yearsExperience}
                   onChange={(e) => updateFormData({ yearsExperience: parseInt(e.target.value) })}
-                  className="w-full"
+                  style={{ width: '100%', accentColor: 'var(--pixel-primary)' }}
                 />
-                <div className="text-center mt-2 font-medium">
+                <div style={sliderValue}>
                   {formData.yearsExperience === 0 ? 'Less than 1 year' : `${formData.yearsExperience} year${formData.yearsExperience > 1 ? 's' : ''}`}
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Number of projects completed
-                </label>
+                <label style={fieldLabel}>Projects completed</label>
                 <input
                   type="range"
                   min="0"
                   max="50"
                   value={formData.previousProjects}
                   onChange={(e) => updateFormData({ previousProjects: parseInt(e.target.value) })}
-                  className="w-full"
+                  style={{ width: '100%', accentColor: 'var(--pixel-primary)' }}
                 />
-                <div className="text-center mt-2 font-medium">
+                <div style={sliderValue}>
                   {formData.previousProjects === 0 ? 'None yet' : `${formData.previousProjects} project${formData.previousProjects > 1 ? 's' : ''}`}
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  How often do you code?
-                </label>
-                <select
-                  value={formData.codingFrequency}
-                  onChange={(e) => updateFormData({ codingFrequency: e.target.value as any })}
-                  className="input"
-                >
-                  <option value="daily">Daily</option>
-                  <option value="weekly">Several times a week</option>
-                  <option value="monthly">Few times a month</option>
-                  <option value="rarely">Rarely</option>
-                </select>
+                <label style={fieldLabel}>How often do you code?</label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  {[
+                    { value: 'daily', label: 'Daily' },
+                    { value: 'weekly', label: 'Weekly' },
+                    { value: 'monthly', label: 'Monthly' },
+                    { value: 'rarely', label: 'Rarely' },
+                  ].map((opt) => (
+                    <div
+                      key={opt.value}
+                      onClick={() => updateFormData({ codingFrequency: opt.value as any })}
+                      className={`bubble-option ${formData.codingFrequency === opt.value ? 'selected' : ''}`}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      {opt.label}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -232,45 +256,42 @@ export const SkillQuestionnaire: React.FC<SkillQuestionnaireProps> = ({ onComple
 
       case 3:
         return (
-          <div className="space-y-6">
-            <div className="text-center">
-              <Trophy className="w-16 h-16 text-primary-600 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Skill Assessment</h2>
-              <p className="text-gray-600">Rate your comfort level (1 = Beginner, 10 = Expert)</p>
-            </div>
+          <div>
+            <h2 style={stepTitle}>Skill Self-Assessment</h2>
+            <p style={stepSubtitle}>Rate your comfort level from 1 (beginner) to 10 (expert)</p>
 
-            <div className="space-y-6">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Data Structures (Arrays, Lists, Trees, etc.)
-                </label>
+                <label style={fieldLabel}>Data Structures (Arrays, Trees, etc.)</label>
                 <input
                   type="range"
                   min="1"
                   max="10"
                   value={formData.comfortWithDataStructures}
                   onChange={(e) => updateFormData({ comfortWithDataStructures: parseInt(e.target.value) })}
-                  className="w-full"
+                  style={{ width: '100%', accentColor: 'var(--pixel-primary)' }}
                 />
-                <div className="text-center mt-2 font-medium">
-                  Level {formData.comfortWithDataStructures}/10
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
+                  <span style={{ fontFamily: sansFont, fontSize: '11px', color: 'rgba(255,255,255,0.35)' }}>Beginner</span>
+                  <span style={sliderValue}>Level {formData.comfortWithDataStructures}/10</span>
+                  <span style={{ fontFamily: sansFont, fontSize: '11px', color: 'rgba(255,255,255,0.35)' }}>Expert</span>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Algorithms (Sorting, Searching, etc.)
-                </label>
+                <label style={fieldLabel}>Algorithms (Sorting, Searching, etc.)</label>
                 <input
                   type="range"
                   min="1"
                   max="10"
                   value={formData.comfortWithAlgorithms}
                   onChange={(e) => updateFormData({ comfortWithAlgorithms: parseInt(e.target.value) })}
-                  className="w-full"
+                  style={{ width: '100%', accentColor: 'var(--pixel-primary)' }}
                 />
-                <div className="text-center mt-2 font-medium">
-                  Level {formData.comfortWithAlgorithms}/10
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
+                  <span style={{ fontFamily: sansFont, fontSize: '11px', color: 'rgba(255,255,255,0.35)' }}>Beginner</span>
+                  <span style={sliderValue}>Level {formData.comfortWithAlgorithms}/10</span>
+                  <span style={{ fontFamily: sansFont, fontSize: '11px', color: 'rgba(255,255,255,0.35)' }}>Expert</span>
                 </div>
               </div>
             </div>
@@ -279,43 +300,24 @@ export const SkillQuestionnaire: React.FC<SkillQuestionnaireProps> = ({ onComple
 
       case 4:
         return (
-          <div className="space-y-6">
-            <div className="text-center">
-              <Code className="w-16 h-16 text-primary-600 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Favorite Topics</h2>
-              <p className="text-gray-600">What programming topics interest you most?</p>
-            </div>
+          <div>
+            <h2 style={stepTitle}>Favorite Topics</h2>
+            <p style={stepSubtitle}>What programming areas interest you most?</p>
 
-            <div className="grid md:grid-cols-2 gap-3">
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
               {[
-                'Web Development',
-                'Mobile Development',
-                'Data Structures',
-                'Algorithms',
-                'Machine Learning',
-                'Database Systems',
-                'Operating Systems',
-                'Networks',
-                'Security',
-                'Game Development',
-                'API Development',
-                'DevOps',
+                'Web Development', 'Mobile Development', 'Data Structures', 'Algorithms',
+                'Machine Learning', 'Database Systems', 'Operating Systems', 'Networks',
+                'Security', 'Game Development', 'API Development', 'DevOps',
               ].map((topic) => (
-                <label key={topic} className="block">
-                  <input
-                    type="checkbox"
-                    checked={formData.favoriteTopics.includes(topic)}
-                    onChange={() => handleTopicToggle(topic)}
-                    className="sr-only"
-                  />
-                  <div className={`p-3 border-2 rounded-lg cursor-pointer transition-colors ${
-                    formData.favoriteTopics.includes(topic)
-                      ? 'border-primary-600 bg-primary-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}>
-                    <div className="text-sm font-medium text-gray-900">{topic}</div>
-                  </div>
-                </label>
+                <div
+                  key={topic}
+                  onClick={() => handleTopicToggle(topic)}
+                  className={`bubble-option ${formData.favoriteTopics.includes(topic) ? 'selected' : ''}`}
+                  style={{ cursor: 'pointer' }}
+                >
+                  {topic}
+                </div>
               ))}
             </div>
           </div>
@@ -323,48 +325,96 @@ export const SkillQuestionnaire: React.FC<SkillQuestionnaireProps> = ({ onComple
 
       case 5:
         return (
-          <div className="space-y-6">
-            <div className="text-center">
-              <Trophy className="w-16 h-16 text-primary-600 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Final Questions</h2>
-              <p className="text-gray-600">Just a few more details to personalize your experience</p>
+          <div>
+            <h2 style={stepTitle}>Final Questions</h2>
+            <p style={stepSubtitle}>A few more details to personalize your experience</p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '28px' }}>
+              {[
+                {
+                  key: 'hasContributedToOpenSource',
+                  label: 'I have contributed to open-source projects',
+                  emoji: '🌐',
+                  checked: formData.hasContributedToOpenSource,
+                  onChange: (v: boolean) => updateFormData({ hasContributedToOpenSource: v }),
+                },
+                {
+                  key: 'hasCompetitiveProgrammingExperience',
+                  label: 'I have competitive programming experience (LeetCode, HackerRank, etc.)',
+                  emoji: '🏆',
+                  checked: formData.hasCompetitiveProgrammingExperience,
+                  onChange: (v: boolean) => updateFormData({ hasCompetitiveProgrammingExperience: v }),
+                },
+              ].map((item) => (
+                <div
+                  key={item.key}
+                  onClick={() => item.onChange(!item.checked)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '14px',
+                    background: item.checked ? 'rgba(0, 255, 136, 0.1)' : 'rgba(255,255,255,0.05)',
+                    border: `1px solid ${item.checked ? 'rgba(0, 255, 136, 0.4)' : 'rgba(255,255,255,0.12)'}`,
+                    borderRadius: '14px',
+                    padding: '16px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  <span style={{ fontSize: '20px', flexShrink: 0 }}>{item.emoji}</span>
+                  <span style={{
+                    fontFamily: sansFont,
+                    fontSize: '13px',
+                    color: item.checked ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.65)',
+                    flex: 1,
+                    lineHeight: '1.5',
+                  }}>{item.label}</span>
+                  <div style={{
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '6px',
+                    border: `2px solid ${item.checked ? 'var(--pixel-primary)' : 'rgba(255,255,255,0.25)'}`,
+                    background: item.checked ? 'var(--pixel-primary)' : 'transparent',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    transition: 'all 0.2s ease',
+                  }}>
+                    {item.checked && (
+                      <svg width="11" height="8" viewBox="0 0 11 8" fill="none">
+                        <path d="M1 4L4 7L10 1" stroke="#0f0f23" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
 
-            <div className="space-y-6">
-              <div>
-                <label className="flex items-center space-x-3">
-                  <input
-                    type="checkbox"
-                    checked={formData.hasContributedToOpenSource}
-                    onChange={(e) => updateFormData({ hasContributedToOpenSource: e.target.checked })}
-                    className="form-checkbox h-5 w-5 text-primary-600"
-                  />
-                  <span className="text-sm font-medium text-gray-700">
-                    I have contributed to open-source projects
-                  </span>
-                </label>
+            {/* ELO preview card */}
+            <div style={{
+              background: 'rgba(0, 212, 255, 0.08)',
+              border: '1px solid rgba(0, 212, 255, 0.2)',
+              borderRadius: '14px',
+              padding: '16px',
+            }}>
+              <div style={{
+                fontFamily: sansFont,
+                fontSize: '13px',
+                fontWeight: '700',
+                color: 'var(--pixel-accent)',
+                marginBottom: '6px',
+              }}>
+                🎯 Your Estimated Starting ELO
               </div>
-
-              <div>
-                <label className="flex items-center space-x-3">
-                  <input
-                    type="checkbox"
-                    checked={formData.hasCompetitiveProgrammingExperience}
-                    onChange={(e) => updateFormData({ hasCompetitiveProgrammingExperience: e.target.checked })}
-                    className="form-checkbox h-5 w-5 text-primary-600"
-                  />
-                  <span className="text-sm font-medium text-gray-700">
-                    I have competitive programming experience (LeetCode, HackerRank, etc.)
-                  </span>
-                </label>
-              </div>
-            </div>
-
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <h3 className="font-medium text-blue-900 mb-2">🎯 Your Estimated Starting ELO</h3>
-              <p className="text-sm text-blue-700">
-                Based on your responses, we'll calculate your initial rating to match you with players of similar skill level.
-                Don't worry - your rating will adjust quickly based on your actual performance!
+              <p style={{
+                fontFamily: sansFont,
+                fontSize: '12px',
+                color: 'rgba(255,255,255,0.5)',
+                margin: 0,
+                lineHeight: '1.6',
+              }}>
+                Based on your responses, we'll calculate your initial rating to match you with players of similar skill. It adjusts quickly based on your actual performance!
               </p>
             </div>
           </div>
@@ -375,44 +425,62 @@ export const SkillQuestionnaire: React.FC<SkillQuestionnaireProps> = ({ onComple
     }
   };
 
+  const stepLabels = ['Experience', 'Languages', 'Details', 'Skills', 'Topics', 'Final'];
+  const progressPct = ((currentStep + 1) / totalSteps) * 100;
+
   return (
-    <div className="max-w-2xl mx-auto">
-      {/* Progress Bar */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
-          <span>Step {currentStep + 1} of {totalSteps}</span>
-          <span>{Math.round(((currentStep + 1) / totalSteps) * 100)}% Complete</span>
+    <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+      {/* Progress bar */}
+      <div style={{ marginBottom: '28px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+          <span style={{ fontFamily: sansFont, fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
+            Step {currentStep + 1} of {totalSteps} — {stepLabels[currentStep]}
+          </span>
+          <span style={{ fontFamily: sansFont, fontSize: '12px', color: 'var(--pixel-primary)', fontWeight: '600' }}>
+            {Math.round(progressPct)}%
+          </span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div
-            className="bg-primary-600 h-2 rounded-full transition-all duration-300"
-            style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
-          ></div>
+        <div style={{
+          width: '100%',
+          height: '3px',
+          background: 'rgba(255,255,255,0.1)',
+          borderRadius: '2px',
+          overflow: 'hidden',
+        }}>
+          <div style={{
+            height: '100%',
+            width: `${progressPct}%`,
+            background: 'linear-gradient(90deg, var(--pixel-primary), var(--pixel-accent))',
+            borderRadius: '2px',
+            transition: 'width 0.35s ease',
+          }} />
         </div>
       </div>
 
-      {/* Step Content */}
-      <div className="card min-h-[400px]">
+      {/* Step content */}
+      <div className="glass-card" style={{ minHeight: '360px' }}>
         {renderStep()}
       </div>
 
       {/* Navigation */}
-      <div className="flex justify-between mt-6">
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px', gap: '12px' }}>
         <button
           onClick={prevStep}
-          className="btn-secondary flex items-center space-x-2"
+          className="btn-glass-secondary"
+          style={{ padding: '12px 24px' }}
         >
-          <ChevronLeft className="w-4 h-4" />
-          <span>Back</span>
+          <ChevronLeft style={{ width: '16px', height: '16px' }} />
+          Back
         </button>
 
         <button
           onClick={nextStep}
           disabled={!isStepValid()}
-          className="btn-primary flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="btn-glass-primary"
+          style={{ padding: '12px 28px', flex: 1, maxWidth: '260px' }}
         >
-          <span>{currentStep === totalSteps - 1 ? 'Complete Registration' : 'Next'}</span>
-          <ChevronRight className="w-4 h-4" />
+          {currentStep === totalSteps - 1 ? 'Complete Registration' : 'Next'}
+          {currentStep < totalSteps - 1 && <ChevronRight style={{ width: '16px', height: '16px' }} />}
         </button>
       </div>
     </div>
