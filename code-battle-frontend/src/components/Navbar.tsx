@@ -250,6 +250,6 @@ export const Navbar: React.FC = () => {
           </motion.div>
         </div>
       </div>
-    </nav>
+    </motion.nav>
   );
 };

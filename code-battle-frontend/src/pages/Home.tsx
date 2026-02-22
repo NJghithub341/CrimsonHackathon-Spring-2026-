@@ -307,6 +307,6 @@ export const Home: React.FC = () => {
           ))}
         </motion.div>
       </motion.div>
-    </div>
+    </motion.div>
   );
 };

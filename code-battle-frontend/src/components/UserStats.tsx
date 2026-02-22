@@ -342,6 +342,6 @@ export const UserStats: React.FC<UserStatsProps> = ({ stats }) => {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
