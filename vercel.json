@@ -1,7 +1,8 @@
 {
-  "buildCommand": "cd code-battle-frontend && npm run build",
-  "outputDirectory": "code-battle-frontend/dist",
-  "installCommand": "cd code-battle-frontend && npm install",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "npm install",
+  "framework": "vite",
   "rewrites": [
     {
       "source": "/(.*)",
